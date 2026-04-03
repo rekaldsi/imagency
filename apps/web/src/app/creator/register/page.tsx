@@ -411,7 +411,7 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
       )}
 
       {activeTab === 'voice' && (
-        <AudioRecorder script={VOICE_SCRIPT} />
+        <AudioRecorder onRecordingComplete={() => {}} />
       )}
 
       <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
