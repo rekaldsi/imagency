@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 const VOICE_SCRIPT = `"The quick brown fox jumps over the lazy dog. She sells seashells by the seashore. How much wood would a woodchuck chuck if a woodchuck could chuck wood? Peter Piper picked a peck of pickled peppers. The rain in Spain stays mainly in the plain."`
 
 interface AudioRecorderProps {
+  script?: string
   onRecordingComplete?: (blob: Blob) => void
 }
 
