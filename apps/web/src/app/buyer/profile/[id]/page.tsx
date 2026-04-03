@@ -1,304 +1,420 @@
-'use client'
-
-import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
-// ─── Mock Data (subset) ───────────────────────────────────────────────────────
-
-interface MockCreator {
+const MOCK_PROFILES: Record<string, {
   id: string
   firstName: string
   lastInitial: string
   ageRange: string
-  age: number
   gender: string
+  skinTone: string
+  hairColor: string
+  eyeColor: string
+  height: string
+  build: string
   voiceType: string
   accent: string
+  languages: string[]
+  energyArchetype: string
+  brandAlignment: string[]
   availableUses: string[]
+  baseLicenseFee: number
   totalEarnings: number
   avatarSeed: number
-  skinTone: number
-  hairColor: string
-  energyArchetype: string
+  rating: number
+  reviewCount: number
+  bio: string
+  photoSeeds: number[]
+}> = {
+  'IMA-1001': {
+    id: 'IMA-1001',
+    firstName: 'Marcus',
+    lastInitial: 'T',
+    ageRange: '30–39',
+    gender: 'Male',
+    skinTone: 'Deep Brown',
+    hairColor: 'Black',
+    eyeColor: 'Dark Brown',
+    height: "6'1\"",
+    build: 'Athletic',
+    voiceType: 'Baritone',
+    accent: 'American General',
+    languages: ['English'],
+    energyArchetype: 'Confident & Authoritative',
+    brandAlignment: ['Luxury', 'Sports', 'Finance'],
+    availableUses: ['Advertising', 'Film & TV', 'Streaming'],
+    baseLicenseFee: 950,
+    totalEarnings: 18400,
+    avatarSeed: 12,
+    rating: 4.9,
+    reviewCount: 47,
+    bio: 'Seasoned actor and model with 10 years of commercial experience. Known for conveying authority and warmth simultaneously. Ideal for premium brand narratives.',
+    photoSeeds: [12, 13, 14, 15, 16, 17],
+  },
 }
 
-const MOCK_CREATORS: MockCreator[] = [
-  { id: '1', firstName: 'Maya', lastInitial: 'T', ageRange: '25–34', age: 29, gender: 'Female', voiceType: 'Alto', accent: 'American General', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 3240, avatarSeed: 10, skinTone: 3, hairColor: 'Black', energyArchetype: 'Calm' },
-  { id: '2', firstName: 'James', lastInitial: 'R', ageRange: '35–44', age: 38, gender: 'Male', voiceType: 'Baritone', accent: 'American Southern', availableUses: ['Gaming', 'Streaming'], totalEarnings: 1890, avatarSeed: 17, skinTone: 5, hairColor: 'Brown', energyArchetype: 'Authoritative' },
-  { id: '3', firstName: 'Sofia', lastInitial: 'M', ageRange: '18–24', age: 22, gender: 'Female', voiceType: 'Soprano', accent: 'American General', availableUses: ['Advertising', 'Streaming'], totalEarnings: 5120, avatarSeed: 25, skinTone: 2, hairColor: 'Blonde', energyArchetype: 'Energetic' },
-  { id: '4', firstName: 'DeShawn', lastInitial: 'K', ageRange: '25–34', age: 31, gender: 'Male', voiceType: 'Tenor', accent: 'American General', availableUses: ['Film & TV', 'Advertising'], totalEarnings: 2750, avatarSeed: 33, skinTone: 6, hairColor: 'Black', energyArchetype: 'Playful' },
-  { id: '5', firstName: 'Priya', lastInitial: 'S', ageRange: '28–38', age: 32, gender: 'Female', voiceType: 'Mezzo', accent: 'British RP', availableUses: ['Advertising', 'Gaming'], totalEarnings: 4100, avatarSeed: 48, skinTone: 4, hairColor: 'Black', energyArchetype: 'Calm' },
-  { id: '6', firstName: 'Carlos', lastInitial: 'V', ageRange: '40–50', age: 44, gender: 'Male', voiceType: 'Bass', accent: 'American General', availableUses: ['Film & TV', 'Streaming'], totalEarnings: 6800, avatarSeed: 57, skinTone: 3, hairColor: 'Dark Brown', energyArchetype: 'Authoritative' },
-  { id: '7', firstName: 'Aisha', lastInitial: 'N', ageRange: '25–34', age: 27, gender: 'Female', voiceType: 'Alto', accent: 'American General', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 2300, avatarSeed: 15, skinTone: 6, hairColor: 'Black', energyArchetype: 'Energetic' },
-  { id: '8', firstName: 'Tyler', lastInitial: 'B', ageRange: '18–24', age: 21, gender: 'Male', voiceType: 'Tenor', accent: 'American Southern', availableUses: ['Gaming', 'Streaming'], totalEarnings: 980, avatarSeed: 21, skinTone: 2, hairColor: 'Brown', energyArchetype: 'Playful' },
-  { id: '9', firstName: 'Mei', lastInitial: 'L', ageRange: '25–34', age: 28, gender: 'Female', voiceType: 'Soprano', accent: 'American General', availableUses: ['Advertising', 'Streaming'], totalEarnings: 3800, avatarSeed: 39, skinTone: 2, hairColor: 'Black', energyArchetype: 'Calm' },
-  { id: '10', firstName: 'Marcus', lastInitial: 'D', ageRange: '35–44', age: 41, gender: 'Male', voiceType: 'Baritone', accent: 'American General', availableUses: ['Film & TV', 'Advertising'], totalEarnings: 5500, avatarSeed: 44, skinTone: 5, hairColor: 'Black', energyArchetype: 'Authoritative' },
-  { id: '11', firstName: 'Leila', lastInitial: 'H', ageRange: '30–40', age: 35, gender: 'Female', voiceType: 'Mezzo', accent: 'British RP', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 4700, avatarSeed: 5, skinTone: 4, hairColor: 'Dark Brown', energyArchetype: 'Calm' },
-  { id: '12', firstName: 'David', lastInitial: 'P', ageRange: '45–55', age: 49, gender: 'Male', voiceType: 'Bass', accent: 'American General', availableUses: ['Film & TV', 'Advertising'], totalEarnings: 9200, avatarSeed: 60, skinTone: 2, hairColor: 'Gray', energyArchetype: 'Authoritative' },
-  { id: '13', firstName: 'Jasmine', lastInitial: 'W', ageRange: '20–30', age: 24, gender: 'Female', voiceType: 'Alto', accent: 'American General', availableUses: ['Streaming', 'Gaming'], totalEarnings: 1450, avatarSeed: 28, skinTone: 5, hairColor: 'Black', energyArchetype: 'Energetic' },
-  { id: '14', firstName: 'Roberto', lastInitial: 'G', ageRange: '30–40', age: 36, gender: 'Male', voiceType: 'Tenor', accent: 'American General', availableUses: ['Advertising', 'Streaming'], totalEarnings: 3100, avatarSeed: 35, skinTone: 3, hairColor: 'Dark Brown', energyArchetype: 'Playful' },
-  { id: '15', firstName: 'Hannah', lastInitial: 'K', ageRange: '25–35', age: 30, gender: 'Female', voiceType: 'Soprano', accent: 'British RP', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 5900, avatarSeed: 8, skinTone: 1, hairColor: 'Blonde', energyArchetype: 'Energetic' },
-  { id: '16', firstName: 'Andre', lastInitial: 'T', ageRange: '20–30', age: 25, gender: 'Male', voiceType: 'Baritone', accent: 'American General', availableUses: ['Gaming', 'Film & TV'], totalEarnings: 1200, avatarSeed: 19, skinTone: 6, hairColor: 'Black', energyArchetype: 'Energetic' },
-  { id: '17', firstName: 'Yuki', lastInitial: 'A', ageRange: '25–35', age: 29, gender: 'Female', voiceType: 'Soprano', accent: 'American General', availableUses: ['Advertising', 'Streaming', 'Gaming'], totalEarnings: 2800, avatarSeed: 42, skinTone: 2, hairColor: 'Black', energyArchetype: 'Playful' },
-  { id: '18', firstName: 'Kevin', lastInitial: 'M', ageRange: '35–45', age: 39, gender: 'Male', voiceType: 'Bass', accent: 'American Southern', availableUses: ['Film & TV', 'Advertising'], totalEarnings: 7100, avatarSeed: 52, skinTone: 4, hairColor: 'Dark Brown', energyArchetype: 'Authoritative' },
-  { id: '19', firstName: 'Fatima', lastInitial: 'O', ageRange: '25–35', age: 31, gender: 'Female', voiceType: 'Alto', accent: 'British RP', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 4200, avatarSeed: 13, skinTone: 5, hairColor: 'Black', energyArchetype: 'Calm' },
-  { id: '20', firstName: 'Ethan', lastInitial: 'C', ageRange: '18–28', age: 23, gender: 'Male', voiceType: 'Tenor', accent: 'American General', availableUses: ['Gaming', 'Streaming'], totalEarnings: 850, avatarSeed: 64, skinTone: 1, hairColor: 'Brown', energyArchetype: 'Playful' },
+const MOCK_REVIEWS = [
+  { buyer: 'Brand Studio A', rating: 5, date: '2026-03-15', comment: 'Marcus delivered exactly what we needed for our finance campaign. Professional, versatile, and the AI outputs were remarkably accurate.' },
+  { buyer: 'Creative Co. B', rating: 5, date: '2026-02-20', comment: 'Outstanding. Used for a luxury automotive campaign. The synthetic output was indistinguishable in quality.' },
+  { buyer: 'Media House C', rating: 4, date: '2026-01-10', comment: 'Very impressed with the turnaround and quality. Would definitely license again for our streaming projects.' },
 ]
 
-// ─── Fake Audio Player ────────────────────────────────────────────────────────
+const LICENSE_OPTIONS = [
+  { type: 'One-Time', from: 950, desc: 'Single project, defined scope', popular: false },
+  { type: 'Subscription', from: 665, desc: 'Per month, ongoing access', popular: true },
+  { type: 'Royalty', from: 475, desc: 'Lower upfront + revenue share', popular: false },
+]
 
-function FakeAudioPlayer() {
-  return (
-    <div className="bg-warm-cream border border-warm-border rounded-xl p-4">
-      <div className="flex items-center gap-3 mb-3">
-        <button className="w-10 h-10 rounded-full bg-charcoal text-warm-white flex items-center justify-center flex-shrink-0 hover:bg-charcoal/80 transition-colors">
-          <span className="text-sm ml-0.5">▶</span>
-        </button>
-        <div className="flex-1">
-          <div className="h-2 bg-warm-border rounded-full overflow-hidden">
-            <div className="h-full w-0 bg-gold rounded-full" />
-          </div>
-        </div>
-        <span className="text-xs text-charcoal-muted font-mono flex-shrink-0">0:00 / 0:15</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-semibold text-charcoal-muted bg-warm-border px-2.5 py-1 rounded-full uppercase tracking-wider">
-          Watermarked Preview — 15 seconds
-        </span>
-      </div>
-      <p className="text-xs text-charcoal-muted mt-2">Full voice profile available after licensing</p>
-    </div>
-  )
-}
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
-
-export default function CreatorProfile() {
-  const params = useParams()
-  const router = useRouter()
-  const id = params?.id as string
-
-  const creator = MOCK_CREATORS.find((c) => c.id === id)
-
-  if (!creator) {
-    return (
-      <div className="min-h-screen bg-warm-white">
-        <Navbar />
-        <div className="max-w-3xl mx-auto px-6 py-24 text-center">
-          <div className="text-5xl mb-4">404</div>
-          <h1 className="text-2xl font-bold text-charcoal mb-3">Creator not found.</h1>
-          <p className="text-charcoal-muted mb-8">This creator may have been removed or the ID is incorrect.</p>
-          <Link href="/buyer/search" className="btn-primary px-8 py-3 rounded-full">
-            ← Back to Search
-          </Link>
-        </div>
-        <Footer />
-      </div>
-    )
-  }
-
-  const imaId = `IMA-${1000 + Number(creator.id)}`
-
-  // Generate a set of photo indices from the avatarSeed
-  const photoSeeds = [
-    creator.avatarSeed,
-    (creator.avatarSeed + 3) % 70 || 1,
-    (creator.avatarSeed + 7) % 70 || 2,
-    (creator.avatarSeed + 11) % 70 || 3,
-    (creator.avatarSeed + 17) % 70 || 4,
-    (creator.avatarSeed + 23) % 70 || 5,
-  ]
-
-  const traits = [
-    { label: 'Age', value: creator.ageRange },
-    { label: 'Voice', value: creator.voiceType },
-    { label: 'Accent', value: creator.accent },
-    { label: 'Energy', value: creator.energyArchetype },
-    { label: 'Hair', value: creator.hairColor },
-    { label: 'Gender', value: creator.gender },
-  ]
-
-  const reviews = [
-    { stars: 5, text: 'Seamless process. The synthetic output was remarkably on-brand. Will license again.', buyer: 'Brand Agency', name: 'Creative Director, Midwest brand' },
-    { stars: 5, text: 'Used for a gaming character voice. Turnaround was fast and quality was excellent.', buyer: 'Game Studio', name: 'Lead Audio, Indie studio' },
-    { stars: 4, text: 'Great energy for our campaign. Legal documentation was thorough — exactly what we needed.', buyer: 'Ad Agency', name: 'Producer, Digital Agency' },
-  ]
+export default function BuyerProfilePage({ params }: { params: { id: string } }) {
+  const profile = MOCK_PROFILES[params.id] || MOCK_PROFILES['IMA-1001']
 
   return (
-    <div className="min-h-screen bg-warm-white">
+    <div style={{ backgroundColor: '#FAFAF8', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
 
-      <div className="px-6 pt-8 pb-20 max-w-7xl mx-auto">
-        {/* Back link */}
-        <div className="mb-6">
-          <Link
-            href="/buyer/search"
-            className="inline-flex items-center gap-2 text-sm text-charcoal-muted hover:text-charcoal transition-colors"
-          >
-            <span>←</span>
-            <span>Search results</span>
-          </Link>
+      <main style={{ flex: 1, maxWidth: '1100px', margin: '0 auto', width: '100%', padding: '2rem 1.5rem' }}>
+        {/* Breadcrumb */}
+        <div style={{ fontSize: '0.8rem', color: '#8A8A8A', marginBottom: '1.5rem', display: 'flex', gap: '6px', alignItems: 'center' }}>
+          <Link href="/buyer/search" style={{ color: '#C9A84C', textDecoration: 'none' }}>Browse Talent</Link>
+          <span>›</span>
+          <span>{profile.firstName} {profile.lastInitial}. — {profile.id}</span>
         </div>
 
-        {/* Main layout */}
-        <div className="flex flex-col lg:flex-row gap-10">
-          {/* Left: Photos + bio */}
-          <div className="flex-1 min-w-0">
-            {/* Main photo */}
-            <div className="relative rounded-2xl overflow-hidden mb-3 aspect-[3/2] md:aspect-[4/3]">
-              <img
-                src={`https://i.pravatar.cc/800?img=${photoSeeds[0]}`}
-                alt="Creator preview"
-                className="w-full h-full object-cover"
-              />
-              {/* Watermark overlay */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '2rem', alignItems: 'flex-start' }}>
+          {/* Left column */}
+          <div>
+            {/* Photo gallery */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '0.75rem',
+                marginBottom: '2rem',
+              }}
+            >
+              {profile.photoSeeds.map((seed, i) => (
                 <div
-                  className="text-warm-white/25 font-bold text-4xl md:text-6xl tracking-widest rotate-[-20deg] whitespace-nowrap"
-                  style={{ textShadow: '0 0 20px rgba(0,0,0,0.3)' }}
+                  key={seed}
+                  style={{
+                    aspectRatio: i === 0 ? '1/1' : '3/4',
+                    gridColumn: i === 0 ? 'span 1' : 'span 1',
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    backgroundColor: '#F4F3EF',
+                  }}
                 >
-                  PREVIEW ONLY
-                </div>
-              </div>
-              <div className="absolute top-4 left-4 bg-charcoal/80 text-warm-white text-xs font-semibold px-3 py-1.5 rounded-full">
-                PREVIEW ONLY — Watermarked
-              </div>
-            </div>
-
-            {/* Thumbnail row */}
-            <div className="grid grid-cols-5 gap-2 mb-8">
-              {photoSeeds.slice(1).map((seed, i) => (
-                <div key={i} className="relative aspect-square rounded-xl overflow-hidden">
                   <img
-                    src={`https://i.pravatar.cc/200?img=${seed}`}
-                    alt=""
-                    className="w-full h-full object-cover"
+                    src={`https://i.pravatar.cc/300?img=${seed}`}
+                    alt={`${profile.firstName} ${profile.lastInitial}. — photo ${i + 1}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-                    <span className="text-warm-white/30 text-xs font-bold rotate-[-15deg]">PREVIEW</span>
-                  </div>
                 </div>
               ))}
             </div>
 
-            {/* Physical traits */}
-            <div className="mb-8">
-              <h3 className="font-bold text-charcoal text-base mb-4">Physical &amp; Voice Traits</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {traits.map((trait) => (
-                  <div key={trait.label} className="bg-warm-cream border border-warm-border rounded-xl px-4 py-2.5">
-                    <div className="text-xs text-charcoal-muted uppercase tracking-wider font-semibold mb-0.5">{trait.label}</div>
-                    <div className="text-sm font-semibold text-charcoal">{trait.value}</div>
+            {/* Voice preview */}
+            <div
+              style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E8E6E1',
+                borderRadius: '12px',
+                padding: '1.25rem',
+                marginBottom: '2rem',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <h3 style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1A1A1A' }}>Voice preview</h3>
+                <span
+                  style={{
+                    backgroundColor: '#E8D5A3',
+                    color: '#A87B2E',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    padding: '3px 10px',
+                    borderRadius: '20px',
+                  }}
+                >
+                  PREVIEW ONLY — 15 seconds
+                </span>
+              </div>
+              <div
+                style={{
+                  position: 'relative',
+                  backgroundColor: '#F4F3EF',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                }}
+              >
+                <button
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    backgroundColor: '#C9A84C',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1rem',
+                    flexShrink: 0,
+                  }}
+                  aria-label="Play voice preview"
+                >
+                  ▶
+                </button>
+                <div style={{ flex: 1 }}>
+                  <div style={{ height: '4px', backgroundColor: '#D1CEC7', borderRadius: '2px', overflow: 'hidden' }}>
+                    <div style={{ width: '0%', height: '100%', backgroundColor: '#C9A84C' }} />
                   </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#8A8A8A', marginTop: '4px' }}>
+                    <span>0:00</span><span>0:15</span>
+                  </div>
+                </div>
+                {/* Watermark overlay */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.65rem',
+                      color: 'rgba(0,0,0,0.2)',
+                      fontWeight: 700,
+                      letterSpacing: '0.2em',
+                      transform: 'rotate(-20deg)',
+                    }}
+                  >
+                    PREVIEW ONLY · IMAGENCY
+                  </span>
+                </div>
+              </div>
+              <p style={{ fontSize: '0.775rem', color: '#8A8A8A', marginTop: '0.5rem' }}>
+                Full voice access provided upon license purchase.
+              </p>
+            </div>
+
+            {/* Physical traits */}
+            <div
+              style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E8E6E1',
+                borderRadius: '12px',
+                padding: '1.25rem',
+                marginBottom: '2rem',
+              }}
+            >
+              <h3 style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1A1A1A', marginBottom: '1rem' }}>Physical traits</h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.625rem' }}>
+                {[
+                  `${profile.ageRange}`,
+                  profile.gender,
+                  profile.skinTone,
+                  `${profile.hairColor} hair`,
+                  `${profile.eyeColor} eyes`,
+                  profile.height,
+                  profile.build,
+                  profile.voiceType,
+                  profile.accent,
+                  ...profile.languages.map((l) => l),
+                ].map((trait) => (
+                  <span
+                    key={trait}
+                    style={{
+                      padding: '4px 12px',
+                      backgroundColor: '#F4F3EF',
+                      borderRadius: '20px',
+                      fontSize: '0.8rem',
+                      color: '#4A4A4A',
+                      border: '1px solid #E8E6E1',
+                    }}
+                  >
+                    {trait}
+                  </span>
                 ))}
               </div>
             </div>
 
-            {/* Voice preview */}
-            <div className="mb-8">
-              <h3 className="font-bold text-charcoal text-base mb-4">Voice Preview</h3>
-              <FakeAudioPlayer />
+            {/* Bio */}
+            <div
+              style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E8E6E1',
+                borderRadius: '12px',
+                padding: '1.25rem',
+                marginBottom: '2rem',
+              }}
+            >
+              <h3 style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1A1A1A', marginBottom: '0.75rem' }}>About</h3>
+              <p style={{ fontSize: '0.9rem', color: '#4A4A4A', lineHeight: 1.7 }}>{profile.bio}</p>
+              <div style={{ marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                <span style={{ fontSize: '0.775rem', color: '#8A8A8A', marginRight: '4px' }}>Brand alignment:</span>
+                {profile.brandAlignment.map((b) => (
+                  <span key={b} style={{ fontSize: '0.775rem', padding: '2px 8px', backgroundColor: '#E8D5A3', borderRadius: '20px', color: '#A87B2E' }}>
+                    {b}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Reviews */}
+            <div>
+              <h3 style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1A1A1A', marginBottom: '1rem' }}>
+                Reviews
+                <span style={{ fontWeight: 400, color: '#8A8A8A', marginLeft: '8px', fontSize: '0.85rem' }}>
+                  ★ {profile.rating} ({profile.reviewCount} reviews)
+                </span>
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {MOCK_REVIEWS.map((r) => (
+                  <div
+                    key={r.date}
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E8E6E1',
+                      borderRadius: '10px',
+                      padding: '1rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontWeight: 500, fontSize: '0.875rem', color: '#1A1A1A' }}>{r.buyer}</span>
+                      <span style={{ fontSize: '0.8rem', color: '#8A8A8A' }}>{r.date}</span>
+                    </div>
+                    <div style={{ color: '#C9A84C', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+                      {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                    </div>
+                    <p style={{ fontSize: '0.875rem', color: '#4A4A4A', lineHeight: 1.6 }}>{r.comment}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Right: License panel (sticky) */}
-          <div className="lg:w-80 flex-shrink-0">
-            <div className="sticky top-6 bg-white border border-warm-border rounded-2xl p-6 flex flex-col gap-5">
-              {/* Creator ID + verified */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <div className="text-xs font-semibold text-charcoal-muted uppercase tracking-wider">Creator</div>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-gold bg-gold/10 px-2.5 py-1 rounded-full">
-                    <span>✓</span>
-                    <span>Profile Verified</span>
-                  </div>
+          {/* Right column — sticky license CTA */}
+          <div style={{ position: 'sticky', top: '80px' }}>
+            <div
+              style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E8E6E1',
+                borderRadius: '16px',
+                padding: '1.5rem',
+                marginBottom: '1rem',
+              }}
+            >
+              {/* Creator identity */}
+              <div style={{ display: 'flex', gap: '0.875rem', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid #F4F3EF' }}>
+                <img
+                  src={`https://i.pravatar.cc/60?img=${profile.avatarSeed}`}
+                  alt={profile.firstName}
+                  style={{ width: '52px', height: '52px', borderRadius: '50%', objectFit: 'cover' }}
+                />
+                <div>
+                  <p style={{ fontWeight: 700, fontSize: '1rem', color: '#1A1A1A' }}>
+                    Creator #{profile.id}
+                  </p>
+                  <p style={{ fontSize: '0.8rem', color: '#8A8A8A' }}>★ {profile.rating} · {profile.energyArchetype}</p>
                 </div>
-                <div className="font-bold text-charcoal text-xl">{imaId}</div>
-                <div className="text-sm text-charcoal-muted mt-0.5">{creator.ageRange} · {creator.voiceType} · {creator.accent}</div>
               </div>
 
-              {/* Available uses */}
-              <div>
-                <div className="text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Available For</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {creator.availableUses.map((use) => (
-                    <span key={use} className="text-xs font-medium text-charcoal bg-warm-cream border border-warm-border px-2.5 py-1 rounded-full">
-                      {use}
+              {/* License options */}
+              <h4 style={{ fontWeight: 600, fontSize: '0.85rem', color: '#1A1A1A', marginBottom: '0.875rem' }}>License type</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginBottom: '1.25rem' }}>
+                {LICENSE_OPTIONS.map((opt) => (
+                  <div
+                    key={opt.type}
+                    style={{
+                      padding: '0.875rem 1rem',
+                      border: `1px solid ${opt.popular ? '#C9A84C' : '#E8E6E1'}`,
+                      borderRadius: '8px',
+                      backgroundColor: opt.popular ? '#FEFDF7' : '#FAFAF8',
+                      position: 'relative',
+                    }}
+                  >
+                    {opt.popular && (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '-10px',
+                          left: '12px',
+                          fontSize: '0.65rem',
+                          fontWeight: 700,
+                          backgroundColor: '#C9A84C',
+                          color: '#1A1A1A',
+                          padding: '2px 8px',
+                          borderRadius: '10px',
+                        }}
+                      >
+                        POPULAR
+                      </span>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <p style={{ fontWeight: 600, fontSize: '0.875rem', color: '#1A1A1A' }}>{opt.type}</p>
+                        <p style={{ fontSize: '0.75rem', color: '#8A8A8A' }}>{opt.desc}</p>
+                      </div>
+                      <p style={{ fontWeight: 700, fontSize: '1rem', color: '#1A1A1A' }}>from ${opt.from}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Permitted uses */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <h4 style={{ fontWeight: 600, fontSize: '0.85rem', color: '#1A1A1A', marginBottom: '0.5rem' }}>Permitted uses</h4>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {profile.availableUses.map((use) => (
+                    <span
+                      key={use}
+                      style={{
+                        fontSize: '0.75rem',
+                        padding: '3px 10px',
+                        backgroundColor: '#F4F3EF',
+                        borderRadius: '20px',
+                        color: '#4A4A4A',
+                        border: '1px solid #E8E6E1',
+                      }}
+                    >
+                      ✓ {use}
                     </span>
                   ))}
                 </div>
               </div>
 
-              {/* Pricing */}
-              <div className="border-t border-warm-border pt-4">
-                <div className="text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-3">Pricing</div>
-                <div className="flex flex-col gap-2.5">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-charcoal-muted">One-Time License</span>
-                    <span className="font-semibold text-charcoal">from $500</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-charcoal-muted">Subscription</span>
-                    <span className="font-semibold text-charcoal">from $200/mo</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-charcoal-muted">Royalty-Based</span>
-                    <span className="font-semibold text-charcoal">from 5%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* CTA buttons */}
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={() => router.push(`/buyer/license?creator=${creator.id}`)}
-                  className="btn-primary w-full rounded-xl"
-                >
-                  Request License
-                </button>
-                <button className="btn-secondary w-full rounded-xl">
-                  Add to Shortlist
-                </button>
-              </div>
-
-              {/* Trust badges */}
-              <div className="flex flex-col gap-2 pt-1 border-t border-warm-border">
-                {['Consent Verified', 'ID Verified', 'Legally Protected'].map((badge) => (
-                  <div key={badge} className="flex items-center gap-2 text-xs text-charcoal-muted">
-                    <span className="text-green-500 font-bold">✓</span>
-                    {badge}
-                  </div>
-                ))}
-              </div>
+              <Link
+                href={`/buyer/license?creator=${profile.id}`}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '0.875rem',
+                  backgroundColor: '#C9A84C',
+                  color: '#1A1A1A',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  textAlign: 'center',
+                  marginBottom: '0.75rem',
+                }}
+              >
+                Request License →
+              </Link>
+              <p style={{ fontSize: '0.75rem', color: '#8A8A8A', textAlign: 'center' }}>
+                Funds held 72h in escrow · Legally binding contract
+              </p>
             </div>
           </div>
         </div>
-
-        {/* Reviews */}
-        <div className="mt-14">
-          <h2 className="text-xl font-bold text-charcoal mb-6">Buyer Reviews</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {reviews.map((review, i) => (
-              <div key={i} className="card flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-0.5 text-gold">
-                    {Array.from({ length: 5 }).map((_, s) => (
-                      <span key={s} className={`text-sm ${s < review.stars ? 'text-gold' : 'text-warm-border'}`}>★</span>
-                    ))}
-                  </div>
-                  <span className="text-xs font-semibold text-charcoal-muted bg-warm-cream px-2.5 py-1 rounded-full">
-                    {review.buyer}
-                  </span>
-                </div>
-                <p className="text-charcoal text-sm leading-relaxed">&ldquo;{review.text}&rdquo;</p>
-                <div className="text-xs text-charcoal-muted">{review.name}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

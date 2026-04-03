@@ -1,438 +1,292 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CreatorCard from '@/components/CreatorCard'
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-
-export interface MockCreator {
-  id: string
-  firstName: string
-  lastInitial: string
-  ageRange: string
-  age: number
-  gender: string
-  voiceType: string
-  accent: string
-  availableUses: string[]
-  totalEarnings: number
-  avatarSeed: number
-  skinTone: number
-  hairColor: string
-  energyArchetype: string
-}
-
-const MOCK_CREATORS: MockCreator[] = [
-  { id: '1', firstName: 'Maya', lastInitial: 'T', ageRange: '25–34', age: 29, gender: 'Female', voiceType: 'Alto', accent: 'American General', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 3240, avatarSeed: 10, skinTone: 3, hairColor: 'Black', energyArchetype: 'Calm' },
-  { id: '2', firstName: 'James', lastInitial: 'R', ageRange: '35–44', age: 38, gender: 'Male', voiceType: 'Baritone', accent: 'American Southern', availableUses: ['Gaming', 'Streaming'], totalEarnings: 1890, avatarSeed: 17, skinTone: 5, hairColor: 'Brown', energyArchetype: 'Authoritative' },
-  { id: '3', firstName: 'Sofia', lastInitial: 'M', ageRange: '18–24', age: 22, gender: 'Female', voiceType: 'Soprano', accent: 'American General', availableUses: ['Advertising', 'Streaming'], totalEarnings: 5120, avatarSeed: 25, skinTone: 2, hairColor: 'Blonde', energyArchetype: 'Energetic' },
-  { id: '4', firstName: 'DeShawn', lastInitial: 'K', ageRange: '25–34', age: 31, gender: 'Male', voiceType: 'Tenor', accent: 'American General', availableUses: ['Film & TV', 'Advertising'], totalEarnings: 2750, avatarSeed: 33, skinTone: 6, hairColor: 'Black', energyArchetype: 'Playful' },
-  { id: '5', firstName: 'Priya', lastInitial: 'S', ageRange: '28–38', age: 32, gender: 'Female', voiceType: 'Mezzo', accent: 'British RP', availableUses: ['Advertising', 'Gaming'], totalEarnings: 4100, avatarSeed: 48, skinTone: 4, hairColor: 'Black', energyArchetype: 'Calm' },
-  { id: '6', firstName: 'Carlos', lastInitial: 'V', ageRange: '40–50', age: 44, gender: 'Male', voiceType: 'Bass', accent: 'American General', availableUses: ['Film & TV', 'Streaming'], totalEarnings: 6800, avatarSeed: 57, skinTone: 3, hairColor: 'Dark Brown', energyArchetype: 'Authoritative' },
-  { id: '7', firstName: 'Aisha', lastInitial: 'N', ageRange: '25–34', age: 27, gender: 'Female', voiceType: 'Alto', accent: 'American General', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 2300, avatarSeed: 15, skinTone: 6, hairColor: 'Black', energyArchetype: 'Energetic' },
-  { id: '8', firstName: 'Tyler', lastInitial: 'B', ageRange: '18–24', age: 21, gender: 'Male', voiceType: 'Tenor', accent: 'American Southern', availableUses: ['Gaming', 'Streaming'], totalEarnings: 980, avatarSeed: 21, skinTone: 2, hairColor: 'Brown', energyArchetype: 'Playful' },
-  { id: '9', firstName: 'Mei', lastInitial: 'L', ageRange: '25–34', age: 28, gender: 'Female', voiceType: 'Soprano', accent: 'American General', availableUses: ['Advertising', 'Streaming'], totalEarnings: 3800, avatarSeed: 39, skinTone: 2, hairColor: 'Black', energyArchetype: 'Calm' },
-  { id: '10', firstName: 'Marcus', lastInitial: 'D', ageRange: '35–44', age: 41, gender: 'Male', voiceType: 'Baritone', accent: 'American General', availableUses: ['Film & TV', 'Advertising'], totalEarnings: 5500, avatarSeed: 44, skinTone: 5, hairColor: 'Black', energyArchetype: 'Authoritative' },
-  { id: '11', firstName: 'Leila', lastInitial: 'H', ageRange: '30–40', age: 35, gender: 'Female', voiceType: 'Mezzo', accent: 'British RP', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 4700, avatarSeed: 5, skinTone: 4, hairColor: 'Dark Brown', energyArchetype: 'Calm' },
-  { id: '12', firstName: 'David', lastInitial: 'P', ageRange: '45–55', age: 49, gender: 'Male', voiceType: 'Bass', accent: 'American General', availableUses: ['Film & TV', 'Advertising'], totalEarnings: 9200, avatarSeed: 60, skinTone: 2, hairColor: 'Gray', energyArchetype: 'Authoritative' },
-  { id: '13', firstName: 'Jasmine', lastInitial: 'W', ageRange: '20–30', age: 24, gender: 'Female', voiceType: 'Alto', accent: 'American General', availableUses: ['Streaming', 'Gaming'], totalEarnings: 1450, avatarSeed: 28, skinTone: 5, hairColor: 'Black', energyArchetype: 'Energetic' },
-  { id: '14', firstName: 'Roberto', lastInitial: 'G', ageRange: '30–40', age: 36, gender: 'Male', voiceType: 'Tenor', accent: 'American General', availableUses: ['Advertising', 'Streaming'], totalEarnings: 3100, avatarSeed: 35, skinTone: 3, hairColor: 'Dark Brown', energyArchetype: 'Playful' },
-  { id: '15', firstName: 'Hannah', lastInitial: 'K', ageRange: '25–35', age: 30, gender: 'Female', voiceType: 'Soprano', accent: 'British RP', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 5900, avatarSeed: 8, skinTone: 1, hairColor: 'Blonde', energyArchetype: 'Energetic' },
-  { id: '16', firstName: 'Andre', lastInitial: 'T', ageRange: '20–30', age: 25, gender: 'Male', voiceType: 'Baritone', accent: 'American General', availableUses: ['Gaming', 'Film & TV'], totalEarnings: 1200, avatarSeed: 19, skinTone: 6, hairColor: 'Black', energyArchetype: 'Energetic' },
-  { id: '17', firstName: 'Yuki', lastInitial: 'A', ageRange: '25–35', age: 29, gender: 'Female', voiceType: 'Soprano', accent: 'American General', availableUses: ['Advertising', 'Streaming', 'Gaming'], totalEarnings: 2800, avatarSeed: 42, skinTone: 2, hairColor: 'Black', energyArchetype: 'Playful' },
-  { id: '18', firstName: 'Kevin', lastInitial: 'M', ageRange: '35–45', age: 39, gender: 'Male', voiceType: 'Bass', accent: 'American Southern', availableUses: ['Film & TV', 'Advertising'], totalEarnings: 7100, avatarSeed: 52, skinTone: 4, hairColor: 'Dark Brown', energyArchetype: 'Authoritative' },
-  { id: '19', firstName: 'Fatima', lastInitial: 'O', ageRange: '25–35', age: 31, gender: 'Female', voiceType: 'Alto', accent: 'British RP', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 4200, avatarSeed: 13, skinTone: 5, hairColor: 'Black', energyArchetype: 'Calm' },
-  { id: '20', firstName: 'Ethan', lastInitial: 'C', ageRange: '18–28', age: 23, gender: 'Male', voiceType: 'Tenor', accent: 'American General', availableUses: ['Gaming', 'Streaming'], totalEarnings: 850, avatarSeed: 64, skinTone: 1, hairColor: 'Brown', energyArchetype: 'Playful' },
+const ALL_CREATORS = [
+  { id: 'IMA-1001', firstName: 'Marcus', lastInitial: 'T', ageRange: '30–39', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 18400, avatarSeed: 12, energyArchetype: 'Confident & Authoritative', gender: 'Male', skinTone: 'Deep Brown', accent: 'American General' },
+  { id: 'IMA-1002', firstName: 'Sofia', lastInitial: 'R', ageRange: '25–29', voiceType: 'Mezzo-Soprano', availableUses: ['Advertising', 'Streaming'], totalEarnings: 12600, avatarSeed: 5, energyArchetype: 'Warm & Approachable', gender: 'Female', skinTone: 'Medium Olive', accent: 'American General' },
+  { id: 'IMA-1003', firstName: 'James', lastInitial: 'O', ageRange: '40–49', voiceType: 'Bass', availableUses: ['Advertising', 'Film & TV', 'AI Model Training'], totalEarnings: 31200, avatarSeed: 33, energyArchetype: 'Wise & Trustworthy', gender: 'Male', skinTone: 'Rich Ebony', accent: 'British RP' },
+  { id: 'IMA-1004', firstName: 'Emi', lastInitial: 'N', ageRange: '25–29', voiceType: 'Soprano', availableUses: ['Advertising', 'Gaming', 'Streaming'], totalEarnings: 8900, avatarSeed: 15, energyArchetype: 'Playful & Creative', gender: 'Female', skinTone: 'Light', accent: 'American General' },
+  { id: 'IMA-1005', firstName: 'Carlos', lastInitial: 'M', ageRange: '35–39', voiceType: 'Tenor', availableUses: ['Advertising', 'Film & TV', 'Gaming'], totalEarnings: 15300, avatarSeed: 21, energyArchetype: 'Energetic & Inspiring', gender: 'Male', skinTone: 'Medium Brown', accent: 'American Southern' },
+  { id: 'IMA-1006', firstName: 'Aisha', lastInitial: 'P', ageRange: '30–39', voiceType: 'Alto', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 22100, avatarSeed: 9, energyArchetype: 'Sophisticated & Elegant', gender: 'Female', skinTone: 'Medium Tan', accent: 'British RP' },
+  { id: 'IMA-1007', firstName: 'Derek', lastInitial: 'H', ageRange: '50–59', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 27800, avatarSeed: 52, energyArchetype: 'Distinguished & Dependable', gender: 'Male', skinTone: 'Fair', accent: 'American General' },
+  { id: 'IMA-1008', firstName: 'Zara', lastInitial: 'W', ageRange: '18–24', voiceType: 'Mezzo-Soprano', availableUses: ['Advertising', 'Streaming', 'Gaming'], totalEarnings: 6700, avatarSeed: 26, energyArchetype: 'Fresh & Authentic', gender: 'Female', skinTone: 'Medium Brown', accent: 'American General' },
+  { id: 'IMA-1009', firstName: 'Raj', lastInitial: 'K', ageRange: '40–49', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 19500, avatarSeed: 41, energyArchetype: 'Analytical & Credible', gender: 'Male', skinTone: 'Medium Tan', accent: 'Indian English' },
+  { id: 'IMA-1010', firstName: 'Maya', lastInitial: 'C', ageRange: '25–29', voiceType: 'Alto', availableUses: ['Advertising', 'Film & TV', 'Gaming'], totalEarnings: 13900, avatarSeed: 17, energyArchetype: 'Bold & Confident', gender: 'Female', skinTone: 'Light', accent: 'American General' },
+  { id: 'IMA-1011', firstName: 'Andre', lastInitial: 'D', ageRange: '35–39', voiceType: 'Tenor', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 34600, avatarSeed: 60, energyArchetype: 'Charismatic & Romantic', gender: 'Male', skinTone: 'Medium Brown', accent: 'French' },
+  { id: 'IMA-1012', firstName: 'Fatima', lastInitial: 'A', ageRange: '30–39', voiceType: 'Mezzo-Soprano', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 16200, avatarSeed: 3, energyArchetype: 'Resilient & Inspiring', gender: 'Female', skinTone: 'Medium Olive', accent: 'American General' },
+  { id: 'IMA-1013', firstName: 'Tyler', lastInitial: 'B', ageRange: '18–24', voiceType: 'Tenor', availableUses: ['Advertising', 'Gaming', 'Streaming'], totalEarnings: 7400, avatarSeed: 44, energyArchetype: 'Youthful & Aspirational', gender: 'Male', skinTone: 'Fair', accent: 'American General' },
+  { id: 'IMA-1014', firstName: 'Grace', lastInitial: 'O', ageRange: '45–54', voiceType: 'Alto', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 24100, avatarSeed: 7, energyArchetype: 'Powerful & Maternal', gender: 'Female', skinTone: 'Deep Brown', accent: 'American General' },
+  { id: 'IMA-1015', firstName: 'Luca', lastInitial: 'R', ageRange: '25–29', voiceType: 'Tenor', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 11000, avatarSeed: 57, energyArchetype: 'Artistic & Dreamy', gender: 'Male', skinTone: 'Light Olive', accent: 'Italian' },
+  { id: 'IMA-1016', firstName: 'Priya', lastInitial: 'S', ageRange: '25–29', voiceType: 'Soprano', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 9800, avatarSeed: 19, energyArchetype: 'Joyful & Vibrant', gender: 'Female', skinTone: 'Medium Tan', accent: 'British Asian' },
+  { id: 'IMA-1017', firstName: 'Nathan', lastInitial: 'P', ageRange: '40–49', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 14700, avatarSeed: 48, energyArchetype: 'Rugged & Genuine', gender: 'Male', skinTone: 'Fair', accent: 'American Southern' },
+  { id: 'IMA-1018', firstName: 'Kezia', lastInitial: 'A', ageRange: '18–24', voiceType: 'Alto', availableUses: ['Advertising', 'Streaming'], totalEarnings: 4200, avatarSeed: 11, energyArchetype: 'Fierce & Expressive', gender: 'Female', skinTone: 'Rich Ebony', accent: 'American General' },
+  { id: 'IMA-1019', firstName: 'David', lastInitial: 'K', ageRange: '50–59', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 21300, avatarSeed: 67, energyArchetype: 'Calm & Authoritative', gender: 'Male', skinTone: 'Light', accent: 'American General' },
+  { id: 'IMA-1020', firstName: 'Lucia', lastInitial: 'F', ageRange: '35–39', voiceType: 'Mezzo-Soprano', availableUses: ['Advertising', 'Film & TV', 'Streaming', 'Gaming'], totalEarnings: 17600, avatarSeed: 23, energyArchetype: 'Passionate & Magnetic', gender: 'Female', skinTone: 'Medium Olive', accent: 'American General' },
 ]
 
-const ACCENTS = ['Any', 'American General', 'American Southern', 'British RP']
-const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say']
-const VOICE_TYPES = ['Bass', 'Baritone', 'Tenor', 'Alto', 'Mezzo', 'Soprano']
-const USE_CATEGORIES = ['Advertising', 'Film & TV', 'Streaming', 'Gaming', 'AI Training']
-const LICENSE_TYPES = ['Any', 'One-Time', 'Subscription', 'Royalty']
-const SORT_OPTIONS = ['Most Earned', 'Most Licenses', 'Newest']
+const VOICE_TYPES = ['All', 'Bass', 'Baritone', 'Tenor', 'Alto', 'Mezzo-Soprano', 'Soprano']
+const ACCENTS = ['All', 'American General', 'American Southern', 'British RP', 'British Asian', 'French', 'Italian', 'Indian English']
+const USE_CATEGORIES = ['All', 'Advertising', 'Film & TV', 'Streaming', 'Gaming', 'AI Model Training']
+const GENDERS = ['All', 'Male', 'Female']
+const AGE_RANGES = ['All', '18–24', '25–29', '30–39', '35–39', '40–49', '45–54', '50–59']
 
-interface Filters {
-  searchQuery: string
-  ageMin: number
-  ageMax: number
-  gender: string[]
-  voiceType: string[]
-  accent: string
-  useCategory: string[]
-  licenseType: string
-}
+export default function BuyerSearchPage() {
+  const [filters, setFilters] = useState({
+    gender: 'All',
+    ageRange: 'All',
+    voiceType: 'All',
+    accent: 'All',
+    useCategory: 'All',
+    skinTone: 'All',
+    search: '',
+  })
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
-const DEFAULT_FILTERS: Filters = {
-  searchQuery: '',
-  ageMin: 18,
-  ageMax: 65,
-  gender: [],
-  voiceType: [],
-  accent: 'Any',
-  useCategory: [],
-  licenseType: 'Any',
-}
+  const filtered = useMemo(() => {
+    return ALL_CREATORS.filter((c) => {
+      if (filters.gender !== 'All' && c.gender !== filters.gender) return false
+      if (filters.ageRange !== 'All' && c.ageRange !== filters.ageRange) return false
+      if (filters.voiceType !== 'All' && c.voiceType !== filters.voiceType) return false
+      if (filters.accent !== 'All' && c.accent !== filters.accent) return false
+      if (filters.skinTone !== 'All' && c.skinTone !== filters.skinTone) return false
+      if (filters.useCategory !== 'All' && !c.availableUses.includes(filters.useCategory)) return false
+      if (filters.search && !`${c.firstName} ${c.energyArchetype}`.toLowerCase().includes(filters.search.toLowerCase())) return false
+      return true
+    })
+  }, [filters])
 
-// ─── Checkbox row ──────────────────────────────────────────────────────────
+  const setFilter = (key: keyof typeof filters, value: string) =>
+    setFilters((prev) => ({ ...prev, [key]: value }))
 
-function CheckboxRow({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string
-  checked: boolean
-  onChange: (checked: boolean) => void
-}) {
-  return (
-    <label className="flex items-center gap-2.5 cursor-pointer group">
-      <div
-        className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${
-          checked ? 'bg-gold border-gold' : 'border-warm-border bg-white group-hover:border-gold/50'
-        }`}
-        onClick={() => onChange(!checked)}
-      >
-        {checked && <span className="text-charcoal text-xs font-bold leading-none">✓</span>}
-      </div>
-      <span className="text-sm text-charcoal cursor-pointer" onClick={() => onChange(!checked)}>
+  const activeFilterCount = Object.entries(filters).filter(
+    ([k, v]) => v !== 'All' && v !== ''
+  ).length
+
+  const FilterSelect = ({ label, field, options }: { label: string; field: keyof typeof filters; options: string[] }) => (
+    <div>
+      <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: 600, color: '#8A8A8A', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
         {label}
-      </span>
-    </label>
+      </label>
+      <select
+        value={filters[field]}
+        onChange={(e) => setFilter(field, e.target.value)}
+        style={{
+          width: '100%',
+          padding: '0.6rem 0.75rem',
+          border: '1px solid #D1CEC7',
+          borderRadius: '8px',
+          fontSize: '0.875rem',
+          backgroundColor: '#FFFFFF',
+          color: '#1A1A1A',
+        }}
+      >
+        {options.map((o) => <option key={o} value={o}>{o}</option>)}
+      </select>
+    </div>
   )
-}
 
-// ─── Filter Sidebar ────────────────────────────────────────────────────────
+  const FiltersPanel = () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <FilterSelect label="Gender" field="gender" options={GENDERS} />
+      <FilterSelect label="Age Range" field="ageRange" options={AGE_RANGES} />
+      <FilterSelect label="Voice Type" field="voiceType" options={VOICE_TYPES} />
+      <FilterSelect label="Accent" field="accent" options={ACCENTS} />
+      <FilterSelect label="Use Category" field="useCategory" options={USE_CATEGORIES} />
 
-function FilterSidebar({
-  filters,
-  onChange,
-  onReset,
-}: {
-  filters: Filters
-  onChange: (f: Filters) => void
-  onReset: () => void
-}) {
-  function toggleArray(arr: string[], val: string): string[] {
-    return arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val]
-  }
-
-  return (
-    <aside className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="font-bold text-charcoal text-base">Filter Talent</h2>
-        <button onClick={onReset} className="text-xs text-charcoal-muted hover:text-gold transition-colors">
-          Reset
-        </button>
-      </div>
-
-      {/* Search */}
+      {/* Skin tone swatches */}
       <div>
-        <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Search</label>
-        <input
-          type="text"
-          placeholder="Search name or traits..."
-          value={filters.searchQuery}
-          onChange={(e) => onChange({ ...filters, searchQuery: e.target.value })}
-          className="input-field text-sm"
-        />
-      </div>
-
-      {/* Age range */}
-      <div>
-        <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Age Range</label>
-        <div className="flex gap-2 items-center">
-          <input
-            type="number"
-            min={18}
-            max={65}
-            value={filters.ageMin}
-            onChange={(e) => onChange({ ...filters, ageMin: Number(e.target.value) })}
-            className="input-field text-sm w-20"
-            placeholder="Min"
-          />
-          <span className="text-charcoal-muted text-sm">–</span>
-          <input
-            type="number"
-            min={18}
-            max={65}
-            value={filters.ageMax}
-            onChange={(e) => onChange({ ...filters, ageMax: Number(e.target.value) })}
-            className="input-field text-sm w-20"
-            placeholder="Max"
-          />
-        </div>
-      </div>
-
-      {/* Gender */}
-      <div>
-        <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Gender</label>
-        <div className="flex flex-col gap-2">
-          {GENDERS.map((g) => (
-            <CheckboxRow
-              key={g}
-              label={g}
-              checked={filters.gender.includes(g)}
-              onChange={() => onChange({ ...filters, gender: toggleArray(filters.gender, g) })}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Voice type */}
-      <div>
-        <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Voice Type</label>
-        <div className="flex flex-col gap-2">
-          {VOICE_TYPES.map((v) => (
-            <CheckboxRow
-              key={v}
-              label={v}
-              checked={filters.voiceType.includes(v)}
-              onChange={() => onChange({ ...filters, voiceType: toggleArray(filters.voiceType, v) })}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Accent */}
-      <div>
-        <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Accent</label>
-        <select
-          value={filters.accent}
-          onChange={(e) => onChange({ ...filters, accent: e.target.value })}
-          className="input-field text-sm"
-        >
-          {ACCENTS.map((a) => (
-            <option key={a} value={a}>{a}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Use Category */}
-      <div>
-        <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Use Category</label>
-        <div className="flex flex-col gap-2">
-          {USE_CATEGORIES.map((cat) => (
-            <CheckboxRow
-              key={cat}
-              label={cat}
-              checked={filters.useCategory.includes(cat)}
-              onChange={() => onChange({ ...filters, useCategory: toggleArray(filters.useCategory, cat) })}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* License type */}
-      <div>
-        <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">License Type</label>
-        <div className="flex flex-col gap-2">
-          {LICENSE_TYPES.map((lt) => (
-            <label key={lt} className="flex items-center gap-2.5 cursor-pointer">
-              <div
-                className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center transition-colors ${
-                  filters.licenseType === lt ? 'border-gold' : 'border-warm-border'
-                }`}
-                onClick={() => onChange({ ...filters, licenseType: lt })}
-              >
-                {filters.licenseType === lt && (
-                  <div className="w-2 h-2 rounded-full bg-gold" />
-                )}
-              </div>
-              <span className="text-sm text-charcoal cursor-pointer" onClick={() => onChange({ ...filters, licenseType: lt })}>
-                {lt}
-              </span>
-            </label>
+        <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: 600, color: '#8A8A8A', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem' }}>
+          Skin Tone
+        </label>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {[
+            { label: 'All', color: 'transparent', border: '#D1CEC7' },
+            { label: 'Fair', color: '#FDDBB4' },
+            { label: 'Light', color: '#F5C28C' },
+            { label: 'Light Olive', color: '#D4A574' },
+            { label: 'Medium Olive', color: '#C49A6C' },
+            { label: 'Medium Tan', color: '#A67A52' },
+            { label: 'Medium Brown', color: '#8B5E3C' },
+            { label: 'Deep Brown', color: '#6B3F22' },
+            { label: 'Rich Ebony', color: '#3D1F0F' },
+          ].map((t) => (
+            <button
+              key={t.label}
+              onClick={() => setFilter('skinTone', t.label)}
+              title={t.label}
+              style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                backgroundColor: t.color,
+                border: `2px solid ${filters.skinTone === t.label ? '#C9A84C' : (t.border || 'transparent')}`,
+                cursor: 'pointer',
+                boxShadow: filters.skinTone === t.label ? '0 0 0 2px #C9A84C' : 'none',
+                display: t.label === 'All' ? 'flex' : 'block',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.65rem',
+                color: '#8A8A8A',
+              }}
+            >
+              {t.label === 'All' ? 'All' : ''}
+            </button>
           ))}
         </div>
       </div>
 
       <button
-        onClick={() => {/* filters applied live */}}
-        className="btn-primary w-full rounded-xl"
+        onClick={() => setFilters({ gender: 'All', ageRange: 'All', voiceType: 'All', accent: 'All', useCategory: 'All', skinTone: 'All', search: '' })}
+        style={{
+          padding: '0.6rem',
+          border: '1px solid #D1CEC7',
+          borderRadius: '8px',
+          fontSize: '0.8rem',
+          cursor: 'pointer',
+          backgroundColor: 'transparent',
+          color: '#8A8A8A',
+        }}
       >
-        Apply Filters
+        Clear all filters
       </button>
-    </aside>
+    </div>
   )
-}
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
-
-export default function BuyerSearch() {
-  const router = useRouter()
-  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
-  const [sort, setSort] = useState('Most Earned')
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-
-  const results = useMemo(() => {
-    let list = MOCK_CREATORS.filter((c) => {
-      // search
-      if (filters.searchQuery) {
-        const q = filters.searchQuery.toLowerCase()
-        const match =
-          c.firstName.toLowerCase().includes(q) ||
-          c.voiceType.toLowerCase().includes(q) ||
-          c.accent.toLowerCase().includes(q) ||
-          c.energyArchetype.toLowerCase().includes(q) ||
-          c.hairColor.toLowerCase().includes(q)
-        if (!match) return false
-      }
-      // age
-      if (c.age < filters.ageMin || c.age > filters.ageMax) return false
-      // gender
-      if (filters.gender.length > 0 && !filters.gender.includes(c.gender)) return false
-      // voice
-      if (filters.voiceType.length > 0 && !filters.voiceType.includes(c.voiceType)) return false
-      // accent
-      if (filters.accent !== 'Any' && c.accent !== filters.accent) return false
-      // use category
-      if (filters.useCategory.length > 0) {
-        const hasAll = filters.useCategory.every((cat) => c.availableUses.includes(cat))
-        if (!hasAll) return false
-      }
-      return true
-    })
-
-    // sort
-    if (sort === 'Most Earned') list = [...list].sort((a, b) => b.totalEarnings - a.totalEarnings)
-    else if (sort === 'Newest') list = [...list].sort((a, b) => Number(b.id) - Number(a.id))
-
-    return list
-  }, [filters, sort])
 
   return (
-    <div className="min-h-screen bg-warm-white">
+    <div style={{ backgroundColor: '#FAFAF8', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
 
-      <div className="px-6 pt-8 pb-20 max-w-7xl mx-auto">
+      <main style={{ flex: 1, maxWidth: '1280px', margin: '0 auto', width: '100%', padding: '2rem 1.5rem' }}>
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-charcoal mb-1">Browse Talent</h1>
-          <p className="text-charcoal-muted text-sm">Find the right creator for your project.</p>
-        </div>
-
-        {/* Mobile: filters toggle */}
-        <div className="md:hidden mb-4">
-          <button
-            onClick={() => setMobileFiltersOpen(true)}
-            className="btn-secondary w-full rounded-xl flex items-center justify-center gap-2"
-          >
-            <span>Show Filters</span>
-            {(filters.gender.length + filters.voiceType.length + filters.useCategory.length > 0 ||
-              filters.accent !== 'Any' ||
-              filters.searchQuery) && (
-              <span className="w-5 h-5 rounded-full bg-gold text-charcoal text-xs font-bold flex items-center justify-center">
-                {filters.gender.length + filters.voiceType.length + filters.useCategory.length +
-                  (filters.accent !== 'Any' ? 1 : 0) +
-                  (filters.searchQuery ? 1 : 0)}
-              </span>
-            )}
-          </button>
-        </div>
-
-        <div className="flex gap-8">
-          {/* Desktop sidebar */}
-          <div className="hidden md:block w-64 flex-shrink-0">
-            <div className="sticky top-6 bg-white border border-warm-border rounded-2xl p-6">
-              <FilterSidebar
-                filters={filters}
-                onChange={setFilters}
-                onReset={() => setFilters(DEFAULT_FILTERS)}
-              />
-            </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <h1 style={{ fontWeight: 700, fontSize: '1.5rem', color: '#1A1A1A', marginBottom: '4px' }}>Browse Talent</h1>
+            <p style={{ fontSize: '0.875rem', color: '#8A8A8A' }}>
+              {filtered.length} of {ALL_CREATORS.length} creators match your filters
+            </p>
           </div>
 
-          {/* Results */}
-          <div className="flex-1 min-w-0">
-            {/* Results bar */}
-            <div className="flex items-center justify-between mb-5 gap-4">
-              <div className="text-sm text-charcoal-muted">
-                Showing <strong className="text-charcoal">{results.length}</strong> creators
-              </div>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-                className="text-sm border border-warm-border rounded-xl px-3 py-2 bg-white text-charcoal"
-              >
-                {SORT_OPTIONS.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            </div>
-
-            {results.length === 0 ? (
-              <div className="text-center py-20 text-charcoal-muted">
-                <div className="text-4xl mb-4">🔍</div>
-                <div className="font-semibold text-charcoal mb-2">No creators match your filters</div>
-                <button
-                  onClick={() => setFilters(DEFAULT_FILTERS)}
-                  className="text-sm text-gold hover:underline"
-                >
-                  Reset filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {results.map((creator) => (
-                  <CreatorCard
-                    key={creator.id}
-                    creator={{
-                      id: creator.id,
-                      firstName: creator.firstName,
-                      lastInitial: creator.lastInitial,
-                      ageRange: creator.ageRange,
-                      voiceType: creator.voiceType,
-                      availableUses: creator.availableUses,
-                      totalEarnings: creator.totalEarnings,
-                      avatarSeed: creator.avatarSeed,
-                      accent: creator.accent,
-                    }}
-                    showLicense={true}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile filters overlay */}
-      {mobileFiltersOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-charcoal/50"
-            onClick={() => setMobileFiltersOpen(false)}
-          />
-          {/* Panel */}
-          <div className="relative ml-auto w-80 max-w-full h-full bg-white overflow-y-auto p-6 flex flex-col gap-4">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="font-bold text-charcoal text-lg">Filters</h2>
-              <button
-                onClick={() => setMobileFiltersOpen(false)}
-                className="text-charcoal-muted hover:text-charcoal text-2xl leading-none"
-              >
-                ×
-              </button>
-            </div>
-            <FilterSidebar
-              filters={filters}
-              onChange={setFilters}
-              onReset={() => setFilters(DEFAULT_FILTERS)}
+          {/* Search */}
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <input
+              type="search"
+              value={filters.search}
+              onChange={(e) => setFilter('search', e.target.value)}
+              placeholder="Search by name or energy..."
+              style={{
+                padding: '0.6rem 0.875rem',
+                border: '1px solid #D1CEC7',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                width: '220px',
+                backgroundColor: '#FFFFFF',
+              }}
             />
+            {/* Mobile filter toggle */}
             <button
-              onClick={() => setMobileFiltersOpen(false)}
-              className="btn-primary w-full rounded-xl mt-4"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '0.6rem 1rem',
+                border: '1px solid #D1CEC7',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+                backgroundColor: activeFilterCount > 0 ? '#C9A84C' : '#FFFFFF',
+                color: activeFilterCount > 0 ? '#1A1A1A' : '#4A4A4A',
+              }}
             >
-              Show {results.length} results
+              Filters
+              {activeFilterCount > 0 && (
+                <span
+                  style={{
+                    backgroundColor: '#1A1A1A',
+                    color: '#FFFFFF',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    padding: '1px 6px',
+                    borderRadius: '10px',
+                  }}
+                >
+                  {activeFilterCount}
+                </span>
+              )}
             </button>
           </div>
         </div>
-      )}
+
+        <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
+          {/* Sidebar — Desktop always visible */}
+          <div
+            style={{
+              width: '220px',
+              minWidth: '220px',
+              display: sidebarOpen ? 'block' : 'none',
+              position: sidebarOpen ? 'fixed' : 'sticky',
+              inset: sidebarOpen ? 0 : 'auto',
+              top: sidebarOpen ? 0 : '80px',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E8E6E1',
+              borderRadius: sidebarOpen ? 0 : '12px',
+              padding: '1.25rem',
+              zIndex: sidebarOpen ? 200 : 1,
+              overflowY: 'auto',
+              maxHeight: sidebarOpen ? '100vh' : 'calc(100vh - 100px)',
+            }}
+            className="md:block md:!display-block"
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1A1A1A' }}>Filters</h3>
+              {sidebarOpen && (
+                <button onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.25rem', color: '#8A8A8A' }}>×</button>
+              )}
+            </div>
+            <FiltersPanel />
+          </div>
+
+          {/* Overlay for mobile */}
+          {sidebarOpen && (
+            <div
+              onClick={() => setSidebarOpen(false)}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                zIndex: 199,
+              }}
+            />
+          )}
+
+          {/* Results grid */}
+          <div style={{ flex: 1 }}>
+            {filtered.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '4rem 0', color: '#8A8A8A' }}>
+                <p style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>No creators match your filters</p>
+                <p style={{ fontSize: '0.875rem' }}>Try broadening your search</p>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  gap: '1.25rem',
+                }}
+              >
+                {filtered.map((creator) => (
+                  <CreatorCard key={creator.id} creator={creator} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
 
       <Footer />
     </div>
