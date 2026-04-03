@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
       <nav className="flex items-center justify-between px-8 py-6 border-b border-white/10">
-        <div className="text-2xl font-bold tracking-tight">PERSONA</div>
+        <div className="text-2xl font-bold tracking-tight">IMAGENCY</div>
         <div className="flex gap-6 text-sm text-white/60">
           <a href="/creator" className="hover:text-white transition-colors">For Creators</a>
           <a href="/buyer" className="hover:text-white transition-colors">For Buyers</a>

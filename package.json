@@ -1,5 +1,5 @@
 {
-  "name": "persona-platform",
+  "name": "imagency",
   "private": true,
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {

@@ -24,7 +24,7 @@ server.register(multipart, {
 
 // Health check
 server.get('/health', async () => {
-  return { status: 'ok', service: 'persona-api', version: '0.1.0' }
+  return { status: 'ok', service: 'imagency-api', version: '0.1.0' }
 })
 
 // Routes (MVP)
