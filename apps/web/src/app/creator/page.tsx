@@ -60,119 +60,6 @@ function FAQAccordion() {
   )
 }
 
-// ─── Earnings Calculator ────────────────────────────────────────────────────
-
-const USE_CATEGORIES = [
-  { label: 'Advertising', value: 'advertising' },
-  { label: 'Film & TV', value: 'film_tv' },
-  { label: 'Streaming', value: 'streaming' },
-  { label: 'Gaming', value: 'gaming' },
-]
-
-const DURATIONS = [
-  { label: '30 days', value: '30-days' },
-  { label: '90 days', value: '90-days' },
-  { label: '6 months', value: '6-months' },
-  { label: '1 year', value: '1-year' },
-]
-
-const GEOGRAPHIES = [
-  { label: 'Single Country', value: 'single-country' },
-  { label: 'North America', value: 'north-america' },
-  { label: 'Global', value: 'global' },
-]
-
-function EarningsCalculator() {
-  const [useCategory, setUseCategory] = useState('advertising')
-  const [duration, setDuration] = useState('90-days')
-  const [geography, setGeography] = useState('north-america')
-  const [price, setPrice] = useState(0)
-
-  const config = {
-    type: 'one-time',
-    useCategory,
-    mediaTypes: ['video'],
-    geography,
-    duration,
-    volume: 1,
-  }
-
-  return (
-    <div className="grid md:grid-cols-2 gap-8 items-start">
-      <div className="flex flex-col gap-6">
-        <div>
-          <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Use Category</label>
-          <div className="grid grid-cols-2 gap-2">
-            {USE_CATEGORIES.map((c) => (
-              <button
-                key={c.value}
-                onClick={() => setUseCategory(c.value)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
-                  useCategory === c.value
-                    ? 'bg-gold border-gold text-charcoal'
-                    : 'bg-white border-warm-border text-charcoal-muted hover:border-gold/50'
-                }`}
-              >
-                {c.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Duration</label>
-          <div className="grid grid-cols-2 gap-2">
-            {DURATIONS.map((d) => (
-              <button
-                key={d.value}
-                onClick={() => setDuration(d.value)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
-                  duration === d.value
-                    ? 'bg-gold border-gold text-charcoal'
-                    : 'bg-white border-warm-border text-charcoal-muted hover:border-gold/50'
-                }`}
-              >
-                {d.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Territory</label>
-          <div className="flex flex-col gap-2">
-            {GEOGRAPHIES.map((g) => (
-              <button
-                key={g.value}
-                onClick={() => setGeography(g.value)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium border transition-colors text-left ${
-                  geography === g.value
-                    ? 'bg-gold border-gold text-charcoal'
-                    : 'bg-white border-warm-border text-charcoal-muted hover:border-gold/50'
-                }`}
-              >
-                {g.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <PriceCalculator config={config} onPriceChange={setPrice} />
-        <div className="bg-warm-cream border border-warm-border rounded-xl p-4">
-          <div className="text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-1">Your take-home (70%)</div>
-          <div className="text-3xl font-bold text-charcoal">${Math.round(price * 0.7).toLocaleString()}</div>
-          <div className="text-xs text-charcoal-muted mt-1">Per license · Paid weekly via Stripe</div>
-        </div>
-        <p className="text-xs text-charcoal-muted leading-relaxed">
-          Prices vary by industry, territory, and usage duration. Most advertising licenses run $500–$2,000.
-        </p>
-      </div>
-    </div>
-  )
-}
-
 // ─── Permission Badge ────────────────────────────────────────────────────────
 
 const PERMISSIONS = [
@@ -257,12 +144,15 @@ export default function CreatorLanding() {
 
       {/* Earnings Calculator */}
       <section id="how-it-works" className="px-6 py-20 bg-warm-cream border-y border-warm-border">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-charcoal mb-4">See what you could earn</h2>
-            <p className="text-charcoal-muted">Configure a license scenario to see the payout breakdown.</p>
+            <p className="text-charcoal-muted">Configure a license scenario to see the full price breakdown.</p>
           </div>
-          <EarningsCalculator />
+          <PriceCalculator />
+          <p className="text-xs text-charcoal-muted text-center mt-4 leading-relaxed">
+            Prices vary by industry, territory, and usage duration. Most advertising licenses run $500–$2,000.
+          </p>
         </div>
       </section>
 
