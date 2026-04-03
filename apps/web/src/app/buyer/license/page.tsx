@@ -231,7 +231,17 @@ function ConfigureStep({
 
       {/* Price calculator */}
       <div style={{ position: 'sticky', top: '80px' }}>
-        <PriceCalculator config={config} />
+        <PriceCalculator onChange={(calcConfig, _price) => {
+          setConfig((prev) => ({
+            ...prev,
+            useCategory: calcConfig.useCategory,
+            mediaTypes: calcConfig.mediaTypes,
+            geography: calcConfig.geography,
+            duration: calcConfig.duration,
+            volume: calcConfig.volume,
+            type: calcConfig.licenseType,
+          }))
+        }} />
       </div>
     </div>
   )
