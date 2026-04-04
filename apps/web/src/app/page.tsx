@@ -40,7 +40,7 @@ export default function HomePage() {
               textTransform: 'uppercase',
             }}
           >
-            Consent-first likeness rights
+            AI-generated digital actors
           </div>
 
           <h1
@@ -53,10 +53,9 @@ export default function HomePage() {
               marginBottom: '1.25rem',
             }}
           >
-            Your image.{' '}
-            <span style={{ color: '#C9A84C' }}>Your agency.</span>
+            Your cast.{' '}
             <br />
-            Your revenue.
+            <span style={{ color: '#C9A84C' }}>Ready to license.</span>
           </h1>
 
           <p
@@ -65,27 +64,15 @@ export default function HomePage() {
               color: '#4A4A4A',
               lineHeight: 1.7,
               maxWidth: '560px',
-              margin: '0 auto 0.75rem',
+              margin: '0 auto 2.5rem',
             }}
           >
-            Register your likeness, set your terms, and earn royalties every time a brand
-            or studio uses an AI-generated representation of you.
-          </p>
-
-          <p
-            style={{
-              fontSize: '0.95rem',
-              fontStyle: 'italic',
-              color: '#888888',
-              marginBottom: '2.5rem',
-            }}
-          >
-            The casting agency for the AI era.
+            A growing library of AI-generated digital actors — diverse, consistent, fully licensed. Find your cast. Start creating.
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link
-              href="/creator/register"
+              href="/buyer/search"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -99,10 +86,10 @@ export default function HomePage() {
                 textDecoration: 'none',
               }}
             >
-              Register Your Likeness →
+              Browse Characters →
             </Link>
             <Link
-              href="/buyer/search"
+              href="#pricing"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -117,7 +104,7 @@ export default function HomePage() {
                 border: '1.5px solid #1A1A1A',
               }}
             >
-              Browse Talent
+              View Pricing
             </Link>
           </div>
 
@@ -131,18 +118,18 @@ export default function HomePage() {
             }}
           >
             <div style={{ flex: 1, textAlign: 'center', padding: '1.25rem 1rem' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>2,400+</div>
-              <div style={{ fontSize: '0.75rem', color: '#888888', marginTop: '6px' }}>Creators registered</div>
+              <div style={{ fontSize: '2rem', fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>500+</div>
+              <div style={{ fontSize: '0.75rem', color: '#888888', marginTop: '6px' }}>Characters in library</div>
             </div>
             <div style={{ width: '1px', backgroundColor: '#E8E6E1', alignSelf: 'stretch' }} />
             <div style={{ flex: 1, textAlign: 'center', padding: '1.25rem 1rem' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>70%</div>
-              <div style={{ fontSize: '0.75rem', color: '#888888', marginTop: '6px' }}>Revenue to creators</div>
+              <div style={{ fontSize: '2rem', fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>10</div>
+              <div style={{ fontSize: '0.75rem', color: '#888888', marginTop: '6px' }}>New characters weekly</div>
             </div>
             <div style={{ width: '1px', backgroundColor: '#E8E6E1', alignSelf: 'stretch' }} />
             <div style={{ flex: 1, textAlign: 'center', padding: '1.25rem 1rem' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>$0</div>
-              <div style={{ fontSize: '0.75rem', color: '#888888', marginTop: '6px' }}>Raw data shared</div>
+              <div style={{ fontSize: '2rem', fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>100%</div>
+              <div style={{ fontSize: '0.75rem', color: '#888888', marginTop: '6px' }}>Synthetic. Zero liability.</div>
             </div>
           </div>
         </div>
@@ -153,14 +140,14 @@ export default function HomePage() {
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h2 style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)', fontWeight: 700, color: '#1A1A1A' }}>
-              How it works
+              How it works for you
             </h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-            {/* For Creators */}
+          <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+            {/* For Filmmakers & Creators */}
             <div>
-              <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
                 <div
                   style={{
                     fontSize: '0.7rem',
@@ -171,66 +158,15 @@ export default function HomePage() {
                     marginBottom: '0.75rem',
                   }}
                 >
-                  For Creators
+                  For Filmmakers &amp; Creators
                 </div>
-                <div style={{ width: '40px', height: '2px', backgroundColor: '#C9A84C', marginBottom: '0.75rem' }} />
-                <h3 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#1A1A1A' }}>For Creators</h3>
+                <div style={{ width: '40px', height: '2px', backgroundColor: '#C9A84C', margin: '0 auto 0.75rem' }} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 {[
-                  { n: '01', title: 'Register your likeness', desc: 'Upload photos and record your voice. We capture your unique biometric signature — securely, privately.' },
-                  { n: '02', title: 'Set your terms', desc: 'Choose what your likeness can be used for: ads, film, gaming, AI training. Set exclusivity and geographic limits.' },
-                  { n: '03', title: 'Earn royalties', desc: 'Every license earns you 70%. Track usage, approve requests, and withdraw earnings anytime.' },
-                ].map((step) => (
-                  <div key={step.n} style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
-                    <div
-                      style={{
-                        fontSize: '2.5rem',
-                        fontWeight: 800,
-                        color: '#C9A84C',
-                        lineHeight: 1,
-                        minWidth: '52px',
-                      }}
-                    >
-                      {step.n}
-                    </div>
-                    <div>
-                      <h4 style={{ fontWeight: 600, fontSize: '1rem', color: '#1A1A1A', marginBottom: '6px' }}>{step.title}</h4>
-                      <p style={{ fontSize: '0.875rem', color: '#8A8A8A', lineHeight: 1.8 }}>{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: '1px', height: '200px', backgroundColor: '#E8E6E1' }} className="hidden md:block" />
-            </div>
-
-            {/* For Buyers */}
-            <div>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <div
-                  style={{
-                    fontSize: '0.7rem',
-                    fontWeight: 700,
-                    color: '#C9A84C',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
-                    marginBottom: '0.75rem',
-                  }}
-                >
-                  For Buyers
-                </div>
-                <div style={{ width: '40px', height: '2px', backgroundColor: '#C9A84C', marginBottom: '0.75rem' }} />
-                <h3 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#1A1A1A' }}>For Buyers</h3>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {[
-                  { n: '01', title: 'Search & filter talent', desc: 'Find the perfect likeness by age, look, voice type, accent, energy, and permitted use categories.' },
-                  { n: '02', title: 'Preview & configure', desc: 'Preview watermarked samples. Configure your license scope: use case, geography, duration, volume.' },
-                  { n: '03', title: 'License & generate', desc: 'Pay securely. Receive API credentials to generate AI representations within your licensed scope.' },
+                  { n: '01', title: 'Browse the library', desc: 'Filter by age, gender, ethnicity, voice type, archetype, and use case. Find exactly who you need.' },
+                  { n: '02', title: 'Choose your license', desc: 'Pick the scope that fits your project — single scene, full film, or commercial. Configure duration and geography.' },
+                  { n: '03', title: 'Download your kit', desc: 'Get everything in one package: reference images, voice files, character profile, and a production guide for your tools.' },
                 ].map((step) => (
                   <div key={step.n} style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
                     <div
@@ -262,10 +198,10 @@ export default function HomePage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <h2 style={{ fontSize: 'clamp(1.75rem, 3vw, 2.25rem)', fontWeight: 700, color: '#1A1A1A', marginBottom: '0.5rem' }}>
-                Featured creators
+                Featured characters
               </h2>
               <p style={{ fontSize: '0.95rem', color: '#8A8A8A' }}>
-                Join 2,400+ creators already earning from their likeness
+                A sample from the library — 500+ synthetic characters, ready to license
               </p>
             </div>
             <Link
@@ -624,7 +560,7 @@ export default function HomePage() {
 
       {/* ── DUAL PATH CTA ── */}
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {/* Left Panel — For Creators */}
+        {/* Left Panel — Coming Soon: Creator Accounts */}
         <div style={{ flex: '1 1 300px', backgroundColor: '#F5E9C8', padding: '5rem 4rem' }}>
           <div
             style={{
@@ -636,7 +572,7 @@ export default function HomePage() {
               marginBottom: '1rem',
             }}
           >
-            For Creators
+            Coming Soon
           </div>
           <h2
             style={{
@@ -648,36 +584,22 @@ export default function HomePage() {
               marginBottom: '1.5rem',
             }}
           >
-            Turn your likeness into a revenue stream.
+            Become a character creator.
           </h2>
-          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {[
-              'Set your own terms and permitted uses',
-              'Earn 70% of every license',
-              'Full control. Cancel anytime.',
-            ].map((item) => (
-              <li key={item} style={{ fontSize: '0.925rem', color: '#3A3A3A', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                <span style={{ color: '#C9A84C', fontWeight: 700, flexShrink: 0 }}>✓</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <Link
-            href="/creator/register"
+          <p style={{ fontSize: '0.95rem', color: '#5A4A2A', lineHeight: 1.8, marginBottom: '2rem' }}>
+            Soon, you&apos;ll be able to build and sell your own AI characters on imagency. Early access opens later this year.
+          </p>
+          <a
+            href="mailto:hello@imagency.io"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '14px 28px',
-              backgroundColor: '#1A1A1A',
-              color: '#FFFFFF',
-              fontWeight: 700,
-              fontSize: '0.95rem',
-              borderRadius: 0,
-              textDecoration: 'none',
+              fontSize: '0.9rem',
+              color: '#A87B2E',
+              fontWeight: 600,
+              textDecoration: 'underline',
             }}
           >
-            Register Your Likeness →
-          </Link>
+            Join the waitlist →
+          </a>
         </div>
 
         {/* Right Panel — For Buyers */}
@@ -708,7 +630,7 @@ export default function HomePage() {
           </h2>
           <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {[
-              '2,400+ real and synthetic personas',
+              '500+ diverse synthetic characters',
               'Full character kit included with every license',
               'Pay once. No recurring fees.',
             ].map((item) => (
@@ -733,7 +655,7 @@ export default function HomePage() {
               border: '1.5px solid #C9A84C',
             }}
           >
-            Browse Talent →
+            Browse Characters →
           </Link>
         </div>
       </div>
