@@ -42,14 +42,14 @@ export default function Navbar() {
 
         {/* Desktop Nav Links */}
         <div className="hidden md:flex" style={{ gap: '2rem', alignItems: 'center' }}>
-          <Link href="/creator" style={{ color: '#4A4A4A', fontSize: '0.9rem', fontWeight: 500, textDecoration: 'none' }}>
-            For Creators
-          </Link>
           <Link href="/buyer" style={{ color: '#4A4A4A', fontSize: '0.9rem', fontWeight: 500, textDecoration: 'none' }}>
-            For Buyers
+            For Filmmakers
           </Link>
           <Link href="/buyer/search" style={{ color: '#4A4A4A', fontSize: '0.9rem', fontWeight: 500, textDecoration: 'none' }}>
-            Browse Talent
+            Browse Characters
+          </Link>
+          <Link href="#pricing" style={{ color: '#4A4A4A', fontSize: '0.9rem', fontWeight: 500, textDecoration: 'none' }}>
+            Pricing
           </Link>
         </div>
 
@@ -58,8 +58,8 @@ export default function Navbar() {
           <Link href="/login" className="btn-secondary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.875rem' }}>
             Log In
           </Link>
-          <Link href="/creator/register" className="btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.875rem' }}>
-            Register
+          <Link href="/buyer/search" className="btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.875rem' }}>
+            Browse Characters
           </Link>
         </div>
 
@@ -86,21 +86,18 @@ export default function Navbar() {
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <Link href="/creator" style={{ color: '#4A4A4A', fontWeight: 500, textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
-              For Creators
-            </Link>
             <Link href="/buyer" style={{ color: '#4A4A4A', fontWeight: 500, textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
-              For Buyers
+              For Filmmakers
             </Link>
             <Link href="/buyer/search" style={{ color: '#4A4A4A', fontWeight: 500, textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
-              Browse Talent
+              Browse Characters
             </Link>
             <hr style={{ borderColor: '#E8E6E1' }} />
             <Link href="/login" onClick={() => setMenuOpen(false)} style={{ color: '#1A1A1A', fontWeight: 600, textDecoration: 'none' }}>
               Log In
             </Link>
-            <Link href="/creator/register" className="btn-primary" onClick={() => setMenuOpen(false)} style={{ textAlign: 'center', textDecoration: 'none' }}>
-              Register
+            <Link href="/buyer/search" className="btn-primary" onClick={() => setMenuOpen(false)} style={{ textAlign: 'center', textDecoration: 'none' }}>
+              Browse Characters
             </Link>
           </div>
         </div>
