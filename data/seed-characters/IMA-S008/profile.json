@@ -1,0 +1,36 @@
+{
+  "id": "IMA-S008",
+  "name": "Riley Chen",
+  "age_range": "24-32",
+  "gender": "nonbinary",
+  "ethnicity": "Chinese-American",
+  "archetype": "Creative Visionary",
+  "personality": "Boundary-pushing creativity, thoughtful rebel, sees what others miss",
+  "voice": {
+    "description": "Androgynous mid-range voice, creative energy, American accent, thoughtful pacing with sudden sparks of enthusiasm",
+    "elevenlabs_voice_id": "pending"
+  },
+  "suggested_roles": [
+    "Creative director character",
+    "Protagonist in indie film",
+    "Brand voice",
+    "Artist narrative"
+  ],
+  "genre_fit": [
+    "Indie",
+    "Art",
+    "Tech",
+    "Lifestyle"
+  ],
+  "license_available": true,
+  "generated_at": "2026-04-04T00:20:42.125Z",
+  "asset_paths": {
+    "image_neutral": "images/neutral.png",
+    "image_smile": "images/smile.png",
+    "image_serious": "images/serious.png",
+    "image_three_quarter": "images/three-quarter.png",
+    "image_profile": "images/profile.png",
+    "voice_sample": "voice/voice-sample.mp3",
+    "voice_id_file": "voice/elevenlabs-voice-id.txt"
+  }
+}

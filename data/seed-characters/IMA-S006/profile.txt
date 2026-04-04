@@ -1,0 +1,35 @@
+CHARACTER PROFILE — Priya Nair
+==================================================
+ID:           IMA-S006
+Age Range:    30-40
+Gender:       female
+Ethnicity:    South Indian
+Archetype:    Sophisticated Elegance
+
+PERSONALITY
+Graceful authority, cultural depth, effortless sophistication
+
+VOICE
+Soprano clarity, refined and elegant, subtle South Indian lilt, poised delivery
+
+SUGGESTED ROLES
+  • Luxury brand spokesperson
+  • Lead in drama
+  • Corporate executive
+  • Narrator
+
+GENRE FIT
+  • Luxury
+  • Drama
+  • Corporate
+  • Lifestyle
+
+USAGE GUIDE
+This character kit includes:
+  - 5 reference images (neutral, smile, serious, 3/4 angle, profile)
+  - Voice sample (MP3) + ElevenLabs Voice ID for unlimited generation
+  - This profile document (JSON + TXT)
+
+To use in HeyGen: Upload the neutral.png as your avatar reference image.
+To use in ElevenLabs: Enter the voice ID from elevenlabs-voice-id.txt.
+To use in Runway/Kling: Use images as character reference for video generation.

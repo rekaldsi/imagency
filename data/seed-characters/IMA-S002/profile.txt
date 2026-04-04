@@ -1,0 +1,35 @@
+CHARACTER PROFILE — Sofia Reyes
+==================================================
+ID:           IMA-S002
+Age Range:    25-34
+Gender:       female
+Ethnicity:    Latina
+Archetype:    Warm Professional
+
+PERSONALITY
+Radiates warmth, highly competent, instantly likable
+
+VOICE
+Mezzo-soprano, warm and approachable, slight Latina warmth, clear diction, upbeat energy
+
+SUGGESTED ROLES
+  • Brand spokesperson
+  • Healthcare professional
+  • Teacher
+  • Supporting lead
+
+GENRE FIT
+  • Advertising
+  • E-learning
+  • Healthcare
+  • Lifestyle
+
+USAGE GUIDE
+This character kit includes:
+  - 5 reference images (neutral, smile, serious, 3/4 angle, profile)
+  - Voice sample (MP3) + ElevenLabs Voice ID for unlimited generation
+  - This profile document (JSON + TXT)
+
+To use in HeyGen: Upload the neutral.png as your avatar reference image.
+To use in ElevenLabs: Enter the voice ID from elevenlabs-voice-id.txt.
+To use in Runway/Kling: Use images as character reference for video generation.

@@ -1,0 +1,36 @@
+{
+  "id": "IMA-S003",
+  "name": "James Okafor",
+  "age_range": "45-55",
+  "gender": "male",
+  "ethnicity": "Nigerian-British",
+  "archetype": "Wise Mentor",
+  "personality": "Patient wisdom, deep reliability, seen-it-all gravitas",
+  "voice": {
+    "description": "Rich bass, calm authority, slight British-Nigerian cadence, deliberate and thoughtful pacing",
+    "elevenlabs_voice_id": "pending"
+  },
+  "suggested_roles": [
+    "Narrator",
+    "Professor",
+    "Patriarch",
+    "Documentary voice"
+  ],
+  "genre_fit": [
+    "Documentary",
+    "Drama",
+    "Corporate",
+    "Audiobook"
+  ],
+  "license_available": true,
+  "generated_at": "2026-04-04T00:18:29.711Z",
+  "asset_paths": {
+    "image_neutral": "images/neutral.png",
+    "image_smile": "images/smile.png",
+    "image_serious": "images/serious.png",
+    "image_three_quarter": "images/three-quarter.png",
+    "image_profile": "images/profile.png",
+    "voice_sample": "voice/voice-sample.mp3",
+    "voice_id_file": "voice/elevenlabs-voice-id.txt"
+  }
+}

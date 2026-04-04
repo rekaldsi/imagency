@@ -1,0 +1,35 @@
+CHARACTER PROFILE — Dex Calloway
+==================================================
+ID:           IMA-S005
+Age Range:    22-30
+Gender:       male
+Ethnicity:    Mixed race (Black/White)
+Archetype:    Charismatic Lead
+
+PERSONALITY
+Effortlessly cool, magnetic charm, leads without trying
+
+VOICE
+Smooth tenor, natural charisma in the voice, relaxed American accent, feels genuine and magnetic
+
+SUGGESTED ROLES
+  • Lead protagonist
+  • Brand face
+  • Social media host
+  • Romantic lead
+
+GENRE FIT
+  • Drama
+  • Lifestyle
+  • Advertising
+  • Romance
+
+USAGE GUIDE
+This character kit includes:
+  - 5 reference images (neutral, smile, serious, 3/4 angle, profile)
+  - Voice sample (MP3) + ElevenLabs Voice ID for unlimited generation
+  - This profile document (JSON + TXT)
+
+To use in HeyGen: Upload the neutral.png as your avatar reference image.
+To use in ElevenLabs: Enter the voice ID from elevenlabs-voice-id.txt.
+To use in Runway/Kling: Use images as character reference for video generation.

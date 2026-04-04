@@ -1,0 +1,35 @@
+CHARACTER PROFILE — Riley Chen
+==================================================
+ID:           IMA-S008
+Age Range:    24-32
+Gender:       nonbinary
+Ethnicity:    Chinese-American
+Archetype:    Creative Visionary
+
+PERSONALITY
+Boundary-pushing creativity, thoughtful rebel, sees what others miss
+
+VOICE
+Androgynous mid-range voice, creative energy, American accent, thoughtful pacing with sudden sparks of enthusiasm
+
+SUGGESTED ROLES
+  • Creative director character
+  • Protagonist in indie film
+  • Brand voice
+  • Artist narrative
+
+GENRE FIT
+  • Indie
+  • Art
+  • Tech
+  • Lifestyle
+
+USAGE GUIDE
+This character kit includes:
+  - 5 reference images (neutral, smile, serious, 3/4 angle, profile)
+  - Voice sample (MP3) + ElevenLabs Voice ID for unlimited generation
+  - This profile document (JSON + TXT)
+
+To use in HeyGen: Upload the neutral.png as your avatar reference image.
+To use in ElevenLabs: Enter the voice ID from elevenlabs-voice-id.txt.
+To use in Runway/Kling: Use images as character reference for video generation.

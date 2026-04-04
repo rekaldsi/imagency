@@ -1,0 +1,35 @@
+CHARACTER PROFILE — Grace Oduya
+==================================================
+ID:           IMA-S009
+Age Range:    55-65
+Gender:       female
+Ethnicity:    West African
+Archetype:    Elder Authority
+
+PERSONALITY
+Earned wisdom, unshakeable dignity, warmth with weight
+
+VOICE
+Rich contralto, dignified presence in every word, West African warmth, unhurried gravitas
+
+SUGGESTED ROLES
+  • Matriarch
+  • Elder narrator
+  • Community leader
+  • Documentary subject
+
+GENRE FIT
+  • Drama
+  • Documentary
+  • Corporate
+  • Community
+
+USAGE GUIDE
+This character kit includes:
+  - 5 reference images (neutral, smile, serious, 3/4 angle, profile)
+  - Voice sample (MP3) + ElevenLabs Voice ID for unlimited generation
+  - This profile document (JSON + TXT)
+
+To use in HeyGen: Upload the neutral.png as your avatar reference image.
+To use in ElevenLabs: Enter the voice ID from elevenlabs-voice-id.txt.
+To use in Runway/Kling: Use images as character reference for video generation.

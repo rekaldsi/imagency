@@ -1,0 +1,36 @@
+{
+  "id": "IMA-S001",
+  "name": "Marcus Webb",
+  "age_range": "35-44",
+  "gender": "male",
+  "ethnicity": "Black American",
+  "archetype": "Confident Executive",
+  "personality": "Commanding presence, measured confidence, speaks with precision",
+  "voice": {
+    "description": "Deep baritone, authoritative yet warm, American accent, measured cadence — think senior partner or CEO",
+    "elevenlabs_voice_id": "pending"
+  },
+  "suggested_roles": [
+    "Corporate narrator",
+    "CEO character",
+    "Lead protagonist",
+    "Authority figure"
+  ],
+  "genre_fit": [
+    "Corporate",
+    "Drama",
+    "Thriller",
+    "Documentary"
+  ],
+  "license_available": true,
+  "generated_at": "2026-04-04T00:17:34.822Z",
+  "asset_paths": {
+    "image_neutral": "images/neutral.png",
+    "image_smile": "images/smile.png",
+    "image_serious": "images/serious.png",
+    "image_three_quarter": "images/three-quarter.png",
+    "image_profile": "images/profile.png",
+    "voice_sample": "voice/voice-sample.mp3",
+    "voice_id_file": "voice/elevenlabs-voice-id.txt"
+  }
+}

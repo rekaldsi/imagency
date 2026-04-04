@@ -1,0 +1,36 @@
+{
+  "id": "IMA-S007",
+  "name": "Tobias Gruner",
+  "age_range": "40-52",
+  "gender": "male",
+  "ethnicity": "German",
+  "archetype": "Precise Engineer",
+  "personality": "Methodical precision, trustworthy reliability, quiet confidence",
+  "voice": {
+    "description": "Steady baritone, precise diction, light German accent, technical authority, no-nonsense delivery",
+    "elevenlabs_voice_id": "pending"
+  },
+  "suggested_roles": [
+    "Technical narrator",
+    "Engineer character",
+    "Documentary expert",
+    "Corporate authority"
+  ],
+  "genre_fit": [
+    "Corporate",
+    "Tech",
+    "Documentary",
+    "Manufacturing"
+  ],
+  "license_available": true,
+  "generated_at": "2026-04-04T00:20:15.002Z",
+  "asset_paths": {
+    "image_neutral": "images/neutral.png",
+    "image_smile": "images/smile.png",
+    "image_serious": "images/serious.png",
+    "image_three_quarter": "images/three-quarter.png",
+    "image_profile": "images/profile.png",
+    "voice_sample": "voice/voice-sample.mp3",
+    "voice_id_file": "voice/elevenlabs-voice-id.txt"
+  }
+}
