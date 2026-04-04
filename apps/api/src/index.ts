@@ -1,21 +1,20 @@
-import Fastify from 'fastify'
+import Fastify, { FastifyRequest, FastifyReply } from 'fastify'
 import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
 import multipart from '@fastify/multipart'
-import { config } from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
+import { config } from 'dotenv'
 
 config()
 
-const server = Fastify({ logger: true })
-
-// ─── Supabase ───────────────────────────────────────────────────────────────
 const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_KEY || ''
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_KEY!
 )
 
-// ─── Plugins ────────────────────────────────────────────────────────────────
+const server = Fastify({ logger: true })
+
+// Plugins
 server.register(cors, {
   origin: process.env.FRONTEND_URL || 'http://localhost:3010',
   credentials: true,
@@ -29,90 +28,23 @@ server.register(multipart, {
   limits: { fileSize: 100 * 1024 * 1024 },
 })
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-function extractVoiceType(desc: string): string {
-  if (!desc) return 'Unknown'
-  const lower = desc.toLowerCase()
-  if (lower.includes('contralto')) return 'Alto'
-  if (lower.includes('bass') && !lower.includes('baritone')) return 'Bass'
-  if (lower.includes('baritone')) return 'Baritone'
-  if (lower.includes('alto')) return 'Alto'
-  if (lower.includes('tenor')) return 'Tenor'
-  if (lower.includes('mezzo')) return 'Mezzo-Soprano'
-  if (lower.includes('soprano')) return 'Soprano'
-  return 'Unknown'
-}
-
-function extractAccent(desc: string): string {
-  if (!desc) return 'American General'
-  const lower = desc.toLowerCase()
-  if (lower.includes('british-nigerian') || lower.includes('british nigerian')) return 'British Nigerian'
-  if (lower.includes('south indian') || lower.includes('indian lilt')) return 'South Indian'
-  if (lower.includes('german')) return 'German'
-  if (lower.includes('italian')) return 'Italian'
-  if (lower.includes('british')) return 'British RP'
-  if (lower.includes('american')) return 'American General'
-  return 'American General'
-}
-
-function avatarSeedFromId(id: string): number {
-  const num = parseInt(id.replace(/\D/g, ''), 10)
-  return (num % 70) || 1
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function sanitizeCharacter(char: Record<string, any>) {
-  return {
-    id: char.id,
-    firstName: char.first_name,
-    lastInitial: char.last_initial,
-    ageRange: char.age_range,
-    gender: char.gender,
-    ethnicity: char.ethnicity,
-    archetype: char.archetype,
-    energyArchetype: char.archetype,
-    personality: char.personality,
-    voiceType: extractVoiceType(char.voice_description),
-    voiceDescription: char.voice_description,
-    accent: extractAccent(char.voice_description),
-    suggestedRoles: char.suggested_roles || [],
-    genreFit: char.genre_fit || [],
-    availableUses: char.available_uses || [],
-    baseLicenseFee: char.base_license_fee,
-    totalEarnings: char.total_earnings,
-    totalLicenses: char.total_licenses,
-    profileViews: char.profile_views,
-    imageNeutralUrl: char.image_neutral_url,
-    imageSmileUrl: char.image_smile_url,
-    imageSeriousUrl: char.image_serious_url,
-    imageThreeQuarterUrl: char.image_three_quarter_url,
-    imageProfileUrl: char.image_profile_url,
-    voiceSampleUrl: char.voice_sample_url,
-    licenseAvailable: char.license_available,
-    status: char.status,
-    avatarSeed: avatarSeedFromId(char.id),
+// Helper: verify JWT and require admin role
+function requireAdmin(req: FastifyRequest): { id: string; email: string; role: string } {
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw new Error('Unauthorized')
   }
-}
-
-async function logAdminAction(
-  adminId: string,
-  action: string,
-  targetType?: string,
-  targetId?: string,
-  metadata?: Record<string, unknown>
-) {
-  await supabase.from('admin_activity_log').insert({
-    admin_id: adminId,
-    action,
-    target_type: targetType,
-    target_id: targetId,
-    metadata: metadata || {},
-  })
+  const token = authHeader.replace('Bearer ', '')
+  const decoded = server.jwt.verify<{ id: string; email: string; role: string }>(token)
+  if (decoded.role !== 'admin') {
+    throw new Error('Forbidden')
+  }
+  return decoded
 }
 
 // ─── Health ────────────────────────────────────────────────────────────────
 server.get('/health', async () => {
-  return { status: 'ok', service: 'imagency-api', version: '0.3.0', timestamp: new Date().toISOString() }
+  return { status: 'ok', service: 'imagency-api', version: '0.2.0', timestamp: new Date().toISOString() }
 })
 
 // ─── Creators ──────────────────────────────────────────────────────────────
@@ -123,44 +55,39 @@ server.get<{
     gender?: string
     useCategory?: string
     skinTone?: string
-    accent?: string
     limit?: string
     offset?: string
   }
-}>('/api/creators', async (req) => {
-  const { voiceType, ageRange, gender, useCategory, accent, limit, offset } = req.query
+}>('/api/creators', async (req, reply) => {
+  const { voiceType, ageRange, gender, useCategory, skinTone, limit, offset } = req.query
+
+  const off = parseInt(offset || '0')
+  const lim = parseInt(limit || '20')
 
   let query = supabase
     .from('characters')
-    .select('*')
-    .eq('status', 'active')
+    .select('*', { count: 'exact' })
     .eq('license_available', true)
+    .eq('status', 'active')
 
+  if (gender) query = query.eq('gender', gender)
   if (ageRange) query = query.eq('age_range', ageRange)
-  if (gender) query = query.eq('gender', gender.toLowerCase())
   if (voiceType) query = query.ilike('voice_description', `%${voiceType}%`)
-  if (accent) query = query.ilike('voice_description', `%${accent}%`)
   if (useCategory) query = query.contains('available_uses', [useCategory])
+  if (skinTone) query = query.ilike('ethnicity', `%${skinTone}%`)
 
-  const off = parseInt(offset || '0')
-  const lim = parseInt(limit || '50')
   query = query.range(off, off + lim - 1)
 
-  const { data, error } = await query
+  const { data, error, count } = await query
 
   if (error) {
-    return { creators: [], total: 0, limit: lim, offset: off }
+    return reply.status(500).send({ error: error.message })
   }
 
-  const rows = (data || []) as Record<string, unknown>[]
-  const sanitized = rows.map(sanitizeCharacter)
+  // Strip full name — only return first_name and last_initial
+  const sanitized = (data || []).map(({ name: _name, ...rest }) => rest)
 
-  return {
-    creators: sanitized,
-    total: sanitized.length,
-    limit: lim,
-    offset: off,
-  }
+  return { creators: sanitized, total: count ?? 0, limit: lim, offset: off }
 })
 
 server.get<{ Params: { id: string } }>('/api/creators/:id', async (req, reply) => {
@@ -174,15 +101,11 @@ server.get<{ Params: { id: string } }>('/api/creators/:id', async (req, reply) =
     return reply.status(404).send({ error: 'Creator not found' })
   }
 
-  // Increment profile views
-  await supabase
-    .from('characters')
-    .update({ profile_views: ((data as Record<string, unknown>).profile_views as number || 0) + 1 })
-    .eq('id', req.params.id)
-
-  return { creator: sanitizeCharacter(data as Record<string, unknown>) }
+  const { name: _name, ...sanitized } = data
+  return { creator: sanitized }
 })
 
+// ─── Creator Registration (stub — real auth is phase 2) ───────────────────
 server.post<{
   Body: {
     email: string
@@ -193,9 +116,9 @@ server.post<{
     termsAccepted: boolean
   }
 }>('/api/creators/register', async (req, reply) => {
-  const { email, firstName, lastName, ageConfirmed, termsAccepted } = req.body
+  const { email, password, firstName, lastName, ageConfirmed, termsAccepted } = req.body
 
-  if (!email || !firstName || !lastName) {
+  if (!email || !password || !firstName || !lastName) {
     return reply.status(400).send({ error: 'Missing required fields' })
   }
   if (!ageConfirmed || !termsAccepted) {
@@ -212,11 +135,11 @@ server.post<{
   }
 })
 
-// ─── Auth ──────────────────────────────────────────────────────────────────
-server.post<{ Body: { email: string; password: string } }>('/api/auth/login', async (req) => {
+// ─── Auth (stubs — real auth is phase 2) ─────────────────────────────────
+server.post<{ Body: { email: string; password: string } }>('/api/auth/login', async (req, reply) => {
   const { email } = req.body
-  const id = 'BUY-' + Math.floor(1000 + Math.random() * 9000)
-  const role = 'buyer'
+  const id = 'IMA-' + Math.floor(1000 + Math.random() * 9000)
+  const role = 'creator'
 
   const token = server.jwt.sign({ id, email, role }, { expiresIn: '7d' })
 
@@ -237,21 +160,15 @@ server.post<{ Body: { email: string; password: string; role: 'creator' | 'buyer'
 })
 
 // ─── Licenses ──────────────────────────────────────────────────────────────
-server.get('/api/licenses', async (req) => {
-  let buyerId: string | undefined
-  try {
-    await req.jwtVerify()
-    buyerId = (req.user as Record<string, string>).id
-  } catch {
-    // unauthenticated — return empty
-    return { licenses: [] }
-  }
-
-  const { data } = await supabase
+server.get('/api/licenses', async (_req, reply) => {
+  const { data, error } = await supabase
     .from('licenses')
     .select('*')
-    .eq('buyer_id', buyerId)
-    .order('created_at', { ascending: false })
+    .limit(50)
+
+  if (error) {
+    return reply.status(500).send({ error: error.message })
+  }
 
   return { licenses: data || [] }
 })
@@ -275,7 +192,7 @@ server.post<{
 
   const { data: character, error: charError } = await supabase
     .from('characters')
-    .select('*')
+    .select('id')
     .eq('id', creatorId)
     .single()
 
@@ -292,247 +209,170 @@ server.post<{
   const base = basePrices[useCategory] || 300
   const geo = geoMult[geography] || 1.0
   const dur = durMult[duration] || 1.0
-  const media = 1 + ((mediaTypes?.length || 1) - 1) * 0.3
-  const vol = (volume || 1) <= 1 ? 1 : 1 + Math.log(volume) * 0.4
+  const media = 1 + (mediaTypes.length - 1) * 0.3
+  const vol = volume <= 1 ? 1 : 1 + Math.log(volume) * 0.4
   const typeMult = licenseType === 'subscription' ? 0.7 : licenseType === 'royalty' ? 0.5 : 1
   const price = Math.round(base * geo * dur * media * vol * typeMult)
 
   const licenseId = 'LIC-' + Math.floor(1000 + Math.random() * 9000)
   const apiKey = 'sk_ima_' + Math.random().toString(36).substring(2, 14)
 
-  let buyerId: string | undefined
-  let buyerEmail: string | undefined
-  try {
-    await req.jwtVerify()
-    const user = req.user as Record<string, string>
-    buyerId = user.id
-    buyerEmail = user.email
-  } catch {
-    // proceed without auth for demo
+  const { data: license, error: licError } = await supabase
+    .from('licenses')
+    .insert({
+      id: licenseId,
+      character_id: creatorId,
+      license_type: licenseType,
+      use_category: useCategory,
+      media_types: mediaTypes,
+      geography,
+      duration,
+      volume,
+      price,
+      creator_payout: Math.round(price * 0.7),
+      platform_fee: Math.round(price * 0.3),
+      status: 'escrow',
+      api_key: apiKey,
+      escrow_releases_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
+    })
+    .select()
+    .single()
+
+  if (licError) {
+    return reply.status(500).send({ error: licError.message })
   }
 
-  const licenseRow = {
-    id: licenseId,
-    character_id: creatorId,
-    buyer_id: buyerId,
-    buyer_email: buyerEmail,
-    license_type: licenseType,
-    use_category: useCategory,
-    media_types: mediaTypes || [],
-    geography,
-    duration,
-    volume: volume || 1,
-    price,
-    creator_payout: Math.round(price * 0.7),
-    platform_fee: Math.round(price * 0.3),
-    status: 'escrow',
-    api_key: apiKey,
-    escrow_releases_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
-  }
-
-  const { error: insertError } = await supabase.from('licenses').insert(licenseRow)
-
-  if (!insertError) {
-    const char = character as Record<string, unknown>
-    await supabase
-      .from('characters')
-      .update({ total_licenses: ((char.total_licenses as number) || 0) + 1 })
-      .eq('id', creatorId)
-  }
+  // Atomically increment total_licenses
+  await supabase.rpc('increment_character_total_licenses', { char_id: creatorId })
 
   return {
     success: true,
-    license: {
-      ...licenseRow,
-      endpoint: 'https://api.imagency.io/v1/render',
-      escrowReleasesAt: licenseRow.escrow_releases_at,
-      createdAt: new Date().toISOString(),
-    },
+    license: { ...license, endpoint: 'https://api.imagency.io/v1/render' },
   }
 })
 
-// ─── Dashboard Stats ────────────────────────────────────────────────────────
-server.get('/api/dashboard/creator/stats', async (req) => {
-  let characterId: string | undefined
-  try {
-    await req.jwtVerify()
-    characterId = (req.user as Record<string, string>).id
-  } catch {
-    // use empty stats
-  }
+// ─── Dashboard Stats ─────────────────────────────────────────────────────
+server.get('/api/dashboard/creator/stats', async (_req, reply) => {
+  const { data, error } = await supabase
+    .from('characters')
+    .select('total_earnings, total_licenses')
 
-  if (characterId) {
-    const { data: char } = await supabase
-      .from('characters')
-      .select('total_earnings, total_licenses, profile_views')
-      .eq('id', characterId)
-      .single()
+  if (error) return reply.status(500).send({ error: error.message })
 
-    if (char) {
-      const c = char as Record<string, unknown>
-      return {
-        stats: {
-          totalEarnings: c.total_earnings || 0,
-          thisMonth: 0,
-          pending: 0,
-          activeLicenses: c.total_licenses || 0,
-          profileViewsThisWeek: c.profile_views || 0,
-          recentActivity: [],
-        },
-      }
-    }
-  }
+  const rows = data || []
+  const totalEarnings = rows.reduce((s, r) => s + (r.total_earnings || 0), 0)
+  const totalLicenses = rows.reduce((s, r) => s + (r.total_licenses || 0), 0)
 
   return {
     stats: {
-      totalEarnings: 0,
+      totalEarnings,
+      totalLicenses,
       thisMonth: 0,
       pending: 0,
-      activeLicenses: 0,
+      activeLicenses: totalLicenses,
       profileViewsThisWeek: 0,
       recentActivity: [],
     },
   }
 })
 
-server.get('/api/dashboard/buyer/stats', async (req) => {
-  let buyerId: string | undefined
-  try {
-    await req.jwtVerify()
-    buyerId = (req.user as Record<string, string>).id
-  } catch {
-    // empty stats
-  }
+server.get('/api/dashboard/buyer/stats', async (_req, reply) => {
+  const { data, error } = await supabase
+    .from('licenses')
+    .select('api_calls_used, api_calls_limit, status')
 
-  if (buyerId) {
-    const { data: licenses } = await supabase
-      .from('licenses')
-      .select('price, status, api_calls_used, api_calls_limit')
-      .eq('buyer_id', buyerId)
-      .eq('status', 'active')
+  if (error) return reply.status(500).send({ error: error.message })
 
-    const rows = (licenses || []) as Record<string, unknown>[]
-    const totalSpend = rows.reduce((sum, l) => sum + ((l.price as number) || 0), 0)
-    const apiCallsUsed = rows.reduce((sum, l) => sum + ((l.api_calls_used as number) || 0), 0)
-    const apiCallsLimit = rows.reduce((sum, l) => sum + ((l.api_calls_limit as number) || 0), 0)
-
-    return {
-      stats: {
-        totalSpendThisMonth: totalSpend,
-        activeLicenses: rows.length,
-        apiCallsUsed,
-        apiCallsLimit,
-        licencesExpiringIn30Days: 0,
-        recentActivity: [],
-      },
-    }
-  }
+  const rows = data || []
+  const totalApiCalls = rows.reduce((s, r) => s + (r.api_calls_used || 0), 0)
+  const totalApiLimit = rows.reduce((s, r) => s + (r.api_calls_limit || 0), 0)
+  const activeLicenses = rows.filter((r) => r.status === 'active').length
 
   return {
     stats: {
       totalSpendThisMonth: 0,
-      activeLicenses: 0,
-      apiCallsUsed: 0,
-      apiCallsLimit: 0,
+      activeLicenses,
+      apiCallsUsed: totalApiCalls,
+      apiCallsLimit: totalApiLimit,
       licencesExpiringIn30Days: 0,
       recentActivity: [],
     },
   }
 })
 
-// ─── Admin Routes ───────────────────────────────────────────────────────────
+// ─── Admin Routes (JWT protected, role=admin) ─────────────────────────────
 server.get('/api/admin/characters', async (req, reply) => {
-  try {
-    await req.jwtVerify()
-  } catch {
-    return reply.status(401).send({ error: 'Unauthorized' })
-  }
-  const user = req.user as Record<string, string>
-  if (user.role !== 'admin') return reply.status(403).send({ error: 'Forbidden' })
-
-  await logAdminAction(user.id, 'characters_listed', 'character')
+  let admin: { id: string; email: string; role: string }
+  try { admin = requireAdmin(req) } catch { return reply.status(401).send({ error: 'Unauthorized' }) }
 
   const { data, error } = await supabase
     .from('characters')
     .select('*')
-    .order('created_at', { ascending: true })
+    .order('created_at', { ascending: false })
 
   if (error) return reply.status(500).send({ error: error.message })
+
+  await supabase.from('admin_activity_log').insert({
+    admin_id: admin.id, action: 'characters_listed', target_type: 'character', target_id: null, metadata: {},
+  })
+
   return { characters: data || [] }
 })
 
 server.get<{ Params: { id: string } }>('/api/admin/characters/:id', async (req, reply) => {
-  try {
-    await req.jwtVerify()
-  } catch {
-    return reply.status(401).send({ error: 'Unauthorized' })
-  }
-  const user = req.user as Record<string, string>
-  if (user.role !== 'admin') return reply.status(403).send({ error: 'Forbidden' })
+  let admin: { id: string; email: string; role: string }
+  try { admin = requireAdmin(req) } catch { return reply.status(401).send({ error: 'Unauthorized' }) }
 
-  const { data: char, error: charError } = await supabase
+  const { data, error } = await supabase
     .from('characters')
-    .select('*')
+    .select('*, licenses(*)')
     .eq('id', req.params.id)
     .single()
 
-  if (charError || !char) return reply.status(404).send({ error: 'Character not found' })
+  if (error || !data) return reply.status(404).send({ error: 'Character not found' })
 
-  const { data: licenses } = await supabase
-    .from('licenses')
-    .select('*')
-    .eq('character_id', req.params.id)
-    .order('created_at', { ascending: false })
+  await supabase.from('admin_activity_log').insert({
+    admin_id: admin.id, action: 'character_viewed', target_type: 'character', target_id: req.params.id, metadata: {},
+  })
 
-  await logAdminAction(user.id, 'character_viewed', 'character', req.params.id)
-
-  return { character: char, licenses: licenses || [] }
+  return { character: data }
 })
 
 server.get('/api/admin/stats', async (req, reply) => {
-  try {
-    await req.jwtVerify()
-  } catch {
-    return reply.status(401).send({ error: 'Unauthorized' })
-  }
-  const user = req.user as Record<string, string>
-  if (user.role !== 'admin') return reply.status(403).send({ error: 'Forbidden' })
+  let admin: { id: string; email: string; role: string }
+  try { admin = requireAdmin(req) } catch { return reply.status(401).send({ error: 'Unauthorized' }) }
 
-  await logAdminAction(user.id, 'stats_pulled')
-
-  const [charsResult, licensesResult, usageResult] = await Promise.all([
-    supabase.from('characters').select('id, total_earnings, total_licenses', { count: 'exact' }),
-    supabase.from('licenses').select('price, status', { count: 'exact' }),
-    supabase.from('license_usage_events').select('id', { count: 'exact' }),
+  const [{ count: totalChars }, { data: licenseRows }] = await Promise.all([
+    supabase.from('characters').select('*', { count: 'exact', head: true }),
+    supabase.from('licenses').select('creator_payout, api_calls_used'),
   ])
 
-  const chars = (charsResult.data || []) as Record<string, unknown>[]
-  const licenses = (licensesResult.data || []) as Record<string, unknown>[]
+  const totalRevenue = (licenseRows || []).reduce((s, r) => s + (r.creator_payout || 0), 0)
+  const totalApiCalls = (licenseRows || []).reduce((s, r) => s + (r.api_calls_used || 0), 0)
 
-  const totalRevenue = licenses.reduce((sum, l) => sum + ((l.price as number) || 0), 0)
-  const totalApiCalls = usageResult.count || 0
+  await supabase.from('admin_activity_log').insert({
+    admin_id: admin.id, action: 'stats_pulled', target_type: null, target_id: null, metadata: {},
+  })
 
   return {
     stats: {
-      totalCharacters: charsResult.count || 0,
-      totalLicenses: licensesResult.count || 0,
-      totalRevenue,
-      totalApiCalls,
+      total_characters: totalChars ?? 0,
+      total_licenses: (licenseRows || []).length,
+      total_revenue: totalRevenue,
+      total_api_calls: totalApiCalls,
     },
   }
 })
 
-server.patch<{ Params: { id: string }; Body: { status?: string; base_license_fee?: number } }>('/api/admin/characters/:id', async (req, reply) => {
-  try {
-    await req.jwtVerify()
-  } catch {
-    return reply.status(401).send({ error: 'Unauthorized' })
-  }
-  const user = req.user as Record<string, string>
-  if (user.role !== 'admin') return reply.status(403).send({ error: 'Forbidden' })
+server.patch<{
+  Params: { id: string }
+  Body: { status?: string; base_license_fee?: number }
+}>('/api/admin/characters/:id', async (req, reply) => {
+  let admin: { id: string; email: string; role: string }
+  try { admin = requireAdmin(req) } catch { return reply.status(401).send({ error: 'Unauthorized' }) }
 
   const updates: Record<string, unknown> = {}
-  if (req.body.status) updates.status = req.body.status
+  if (req.body.status !== undefined) updates.status = req.body.status
   if (req.body.base_license_fee !== undefined) updates.base_license_fee = req.body.base_license_fee
   updates.updated_at = new Date().toISOString()
 
@@ -543,52 +383,45 @@ server.patch<{ Params: { id: string }; Body: { status?: string; base_license_fee
     .select()
     .single()
 
-  if (error) return reply.status(500).send({ error: error.message })
+  if (error || !data) return reply.status(500).send({ error: error?.message || 'Update failed' })
 
-  await logAdminAction(user.id, 'character_updated', 'character', req.params.id, updates)
+  await supabase.from('admin_activity_log').insert({
+    admin_id: admin.id, action: 'character_updated', target_type: 'character', target_id: req.params.id, metadata: updates,
+  })
 
   return { character: data }
 })
 
 server.get('/api/admin/licenses', async (req, reply) => {
-  try {
-    await req.jwtVerify()
-  } catch {
-    return reply.status(401).send({ error: 'Unauthorized' })
-  }
-  const user = req.user as Record<string, string>
-  if (user.role !== 'admin') return reply.status(403).send({ error: 'Forbidden' })
-
-  await logAdminAction(user.id, 'licenses_listed', 'license')
+  let admin: { id: string; email: string; role: string }
+  try { admin = requireAdmin(req) } catch { return reply.status(401).send({ error: 'Unauthorized' }) }
 
   const { data, error } = await supabase
     .from('licenses')
-    .select(`
-      *,
-      characters(name, first_name, last_initial)
-    `)
+    .select('*, characters(name)')
     .order('created_at', { ascending: false })
 
   if (error) return reply.status(500).send({ error: error.message })
+
+  await supabase.from('admin_activity_log').insert({
+    admin_id: admin.id, action: 'licenses_listed', target_type: 'license', target_id: null, metadata: {},
+  })
+
   return { licenses: data || [] }
 })
 
 server.get('/api/admin/activity', async (req, reply) => {
-  try {
-    await req.jwtVerify()
-  } catch {
-    return reply.status(401).send({ error: 'Unauthorized' })
-  }
-  const user = req.user as Record<string, string>
-  if (user.role !== 'admin') return reply.status(403).send({ error: 'Forbidden' })
+  let admin: { id: string; email: string; role: string }
+  try { admin = requireAdmin(req) } catch { return reply.status(401).send({ error: 'Unauthorized' }) }
 
   const { data, error } = await supabase
     .from('admin_activity_log')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(50)
+    .limit(100)
 
   if (error) return reply.status(500).send({ error: error.message })
+
   return { activity: data || [] }
 })
 
