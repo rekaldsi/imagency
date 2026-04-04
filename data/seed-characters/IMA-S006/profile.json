@@ -1,0 +1,36 @@
+{
+  "id": "IMA-S006",
+  "name": "Priya Nair",
+  "age_range": "30-40",
+  "gender": "female",
+  "ethnicity": "South Indian",
+  "archetype": "Sophisticated Elegance",
+  "personality": "Graceful authority, cultural depth, effortless sophistication",
+  "voice": {
+    "description": "Soprano clarity, refined and elegant, subtle South Indian lilt, poised delivery",
+    "elevenlabs_voice_id": "pending"
+  },
+  "suggested_roles": [
+    "Luxury brand spokesperson",
+    "Lead in drama",
+    "Corporate executive",
+    "Narrator"
+  ],
+  "genre_fit": [
+    "Luxury",
+    "Drama",
+    "Corporate",
+    "Lifestyle"
+  ],
+  "license_available": true,
+  "generated_at": "2026-04-04T00:19:48.391Z",
+  "asset_paths": {
+    "image_neutral": "images/neutral.png",
+    "image_smile": "images/smile.png",
+    "image_serious": "images/serious.png",
+    "image_three_quarter": "images/three-quarter.png",
+    "image_profile": "images/profile.png",
+    "voice_sample": "voice/voice-sample.mp3",
+    "voice_id_file": "voice/elevenlabs-voice-id.txt"
+  }
+}

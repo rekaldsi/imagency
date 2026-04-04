@@ -1,0 +1,35 @@
+CHARACTER PROFILE — Luca Ferretti
+==================================================
+ID:           IMA-S010
+Age Range:    28-38
+Gender:       male
+Ethnicity:    Italian
+Archetype:    Passionate Storyteller
+
+PERSONALITY
+Lives for the story, emotionally generous, expressive without being over the top
+
+VOICE
+Expressive tenor, warmth and theatricality, Italian accent, gestures even through voice, passionate cadence
+
+SUGGESTED ROLES
+  • Brand storyteller
+  • Romantic lead
+  • Chef or artisan character
+  • Cultural narrator
+
+GENRE FIT
+  • Lifestyle
+  • Food
+  • Drama
+  • Advertising
+
+USAGE GUIDE
+This character kit includes:
+  - 5 reference images (neutral, smile, serious, 3/4 angle, profile)
+  - Voice sample (MP3) + ElevenLabs Voice ID for unlimited generation
+  - This profile document (JSON + TXT)
+
+To use in HeyGen: Upload the neutral.png as your avatar reference image.
+To use in ElevenLabs: Enter the voice ID from elevenlabs-voice-id.txt.
+To use in Runway/Kling: Use images as character reference for video generation.

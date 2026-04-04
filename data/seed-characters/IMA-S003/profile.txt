@@ -1,0 +1,35 @@
+CHARACTER PROFILE — James Okafor
+==================================================
+ID:           IMA-S003
+Age Range:    45-55
+Gender:       male
+Ethnicity:    Nigerian-British
+Archetype:    Wise Mentor
+
+PERSONALITY
+Patient wisdom, deep reliability, seen-it-all gravitas
+
+VOICE
+Rich bass, calm authority, slight British-Nigerian cadence, deliberate and thoughtful pacing
+
+SUGGESTED ROLES
+  • Narrator
+  • Professor
+  • Patriarch
+  • Documentary voice
+
+GENRE FIT
+  • Documentary
+  • Drama
+  • Corporate
+  • Audiobook
+
+USAGE GUIDE
+This character kit includes:
+  - 5 reference images (neutral, smile, serious, 3/4 angle, profile)
+  - Voice sample (MP3) + ElevenLabs Voice ID for unlimited generation
+  - This profile document (JSON + TXT)
+
+To use in HeyGen: Upload the neutral.png as your avatar reference image.
+To use in ElevenLabs: Enter the voice ID from elevenlabs-voice-id.txt.
+To use in Runway/Kling: Use images as character reference for video generation.

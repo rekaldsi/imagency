@@ -1,0 +1,12 @@
+{
+  "IMA-S001": { "voice_id": "nPczCjzI2devNBz1zQrb", "voice_name": "Brian - Deep, Resonant and Comforting", "note": "Deep resonant baritone for Marcus Webb / Confident Executive" },
+  "IMA-S002": { "voice_id": "XrExE9yKIg1WjnnlVkGX", "voice_name": "Matilda - Knowledgable, Professional", "note": "Professional warm female for Sofia Reyes" },
+  "IMA-S003": { "voice_id": "JBFqnCBsd6RMkjVDRZzb", "voice_name": "George - Warm, Captivating Storyteller", "note": "British warmth for James Okafor / Wise Mentor" },
+  "IMA-S004": { "voice_id": "hpp4J3VqNfWAUOO0d1Us", "voice_name": "Bella - Professional, Bright, Warm", "note": "Sharp professional female for Aisha Park / Sharp Innovator" },
+  "IMA-S005": { "voice_id": "iP95p4xoKVk53GoZ742B", "voice_name": "Chris - Charming, Down-to-Earth", "note": "Magnetic charming for Dex Calloway / Charismatic Lead" },
+  "IMA-S006": { "voice_id": "pFZP5JQG7iQjIQuC4Bku", "voice_name": "Lily - Velvety Actress", "note": "Sophisticated British for Priya Nair / Sophisticated Elegance" },
+  "IMA-S007": { "voice_id": "onwK4e9ZLuTAKqWW03F9", "voice_name": "Daniel - Steady Broadcaster", "note": "Precise steady British for Tobias Gruner / Precise Engineer" },
+  "IMA-S008": { "voice_id": "SAz9YHcvj6GT2YYXdXww", "voice_name": "River - Relaxed, Neutral, Informative", "note": "Androgynous neutral for Riley Chen / Creative Visionary" },
+  "IMA-S009": { "voice_id": "Xb7hH8MSUJpSbSDYk0k2", "voice_name": "Alice - Clear, Engaging Educator", "note": "Mature dignified for Grace Oduya / Elder Authority" },
+  "IMA-S010": { "voice_id": "CwhRBWXzGAHq8TQ4Fs17", "voice_name": "Roger - Laid-Back, Casual, Resonant", "note": "Warm resonant for Luca Ferretti / Passionate Storyteller" }
+}

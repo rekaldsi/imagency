@@ -1,0 +1,36 @@
+{
+  "id": "IMA-S002",
+  "name": "Sofia Reyes",
+  "age_range": "25-34",
+  "gender": "female",
+  "ethnicity": "Latina",
+  "archetype": "Warm Professional",
+  "personality": "Radiates warmth, highly competent, instantly likable",
+  "voice": {
+    "description": "Mezzo-soprano, warm and approachable, slight Latina warmth, clear diction, upbeat energy",
+    "elevenlabs_voice_id": "pending"
+  },
+  "suggested_roles": [
+    "Brand spokesperson",
+    "Healthcare professional",
+    "Teacher",
+    "Supporting lead"
+  ],
+  "genre_fit": [
+    "Advertising",
+    "E-learning",
+    "Healthcare",
+    "Lifestyle"
+  ],
+  "license_available": true,
+  "generated_at": "2026-04-04T00:18:01.012Z",
+  "asset_paths": {
+    "image_neutral": "images/neutral.png",
+    "image_smile": "images/smile.png",
+    "image_serious": "images/serious.png",
+    "image_three_quarter": "images/three-quarter.png",
+    "image_profile": "images/profile.png",
+    "voice_sample": "voice/voice-sample.mp3",
+    "voice_id_file": "voice/elevenlabs-voice-id.txt"
+  }
+}

@@ -1,0 +1,35 @@
+CHARACTER PROFILE — Aisha Park
+==================================================
+ID:           IMA-S004
+Age Range:    28-38
+Gender:       female
+Ethnicity:    Korean-American
+Archetype:    Sharp Innovator
+
+PERSONALITY
+Razor-sharp mind, quietly intense, innovator energy
+
+VOICE
+Clear alto, crisp and intelligent, American accent, quick wit in delivery, tech-forward energy
+
+SUGGESTED ROLES
+  • Tech spokesperson
+  • Scientist
+  • Lead in thriller
+  • Startup founder character
+
+GENRE FIT
+  • Tech
+  • Sci-Fi
+  • Thriller
+  • Corporate
+
+USAGE GUIDE
+This character kit includes:
+  - 5 reference images (neutral, smile, serious, 3/4 angle, profile)
+  - Voice sample (MP3) + ElevenLabs Voice ID for unlimited generation
+  - This profile document (JSON + TXT)
+
+To use in HeyGen: Upload the neutral.png as your avatar reference image.
+To use in ElevenLabs: Enter the voice ID from elevenlabs-voice-id.txt.
+To use in Runway/Kling: Use images as character reference for video generation.

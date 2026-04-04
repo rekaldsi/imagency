@@ -1,0 +1,36 @@
+{
+  "id": "IMA-S005",
+  "name": "Dex Calloway",
+  "age_range": "22-30",
+  "gender": "male",
+  "ethnicity": "Mixed race (Black/White)",
+  "archetype": "Charismatic Lead",
+  "personality": "Effortlessly cool, magnetic charm, leads without trying",
+  "voice": {
+    "description": "Smooth tenor, natural charisma in the voice, relaxed American accent, feels genuine and magnetic",
+    "elevenlabs_voice_id": "pending"
+  },
+  "suggested_roles": [
+    "Lead protagonist",
+    "Brand face",
+    "Social media host",
+    "Romantic lead"
+  ],
+  "genre_fit": [
+    "Drama",
+    "Lifestyle",
+    "Advertising",
+    "Romance"
+  ],
+  "license_available": true,
+  "generated_at": "2026-04-04T00:19:23.048Z",
+  "asset_paths": {
+    "image_neutral": "images/neutral.png",
+    "image_smile": "images/smile.png",
+    "image_serious": "images/serious.png",
+    "image_three_quarter": "images/three-quarter.png",
+    "image_profile": "images/profile.png",
+    "voice_sample": "voice/voice-sample.mp3",
+    "voice_id_file": "voice/elevenlabs-voice-id.txt"
+  }
+}
