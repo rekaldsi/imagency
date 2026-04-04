@@ -11,7 +11,8 @@ export interface Creator {
   voiceType: string
   availableUses: string[]
   totalEarnings?: number
-  avatarSeed: number
+  avatarSeed?: number
+  imageUrl?: string
   skinTone?: string
   accent?: string
   energyArchetype?: string
@@ -44,7 +45,7 @@ export default function CreatorCard({ creator, showLicense = false }: CreatorCar
       {/* Photo */}
       <div style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden', backgroundColor: '#F4F3EF' }}>
         <img
-          src={`https://i.pravatar.cc/400?img=${creator.avatarSeed}`}
+          src={creator.imageUrl || `https://i.pravatar.cc/400?img=${creator.avatarSeed || 1}`}
           alt={`${creator.firstName} ${creator.lastInitial}.`}
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />

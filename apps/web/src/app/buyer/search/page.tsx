@@ -1,41 +1,23 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CreatorCard from '@/components/CreatorCard'
-
-const ALL_CREATORS = [
-  { id: 'IMA-1001', firstName: 'Marcus', lastInitial: 'T', ageRange: '30–39', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 18400, avatarSeed: 12, energyArchetype: 'Confident & Authoritative', gender: 'Male', skinTone: 'Deep Brown', accent: 'American General' },
-  { id: 'IMA-1002', firstName: 'Sofia', lastInitial: 'R', ageRange: '25–29', voiceType: 'Mezzo-Soprano', availableUses: ['Advertising', 'Streaming'], totalEarnings: 12600, avatarSeed: 5, energyArchetype: 'Warm & Approachable', gender: 'Female', skinTone: 'Medium Olive', accent: 'American General' },
-  { id: 'IMA-1003', firstName: 'James', lastInitial: 'O', ageRange: '40–49', voiceType: 'Bass', availableUses: ['Advertising', 'Film & TV', 'AI Model Training'], totalEarnings: 31200, avatarSeed: 33, energyArchetype: 'Wise & Trustworthy', gender: 'Male', skinTone: 'Rich Ebony', accent: 'British RP' },
-  { id: 'IMA-1004', firstName: 'Emi', lastInitial: 'N', ageRange: '25–29', voiceType: 'Soprano', availableUses: ['Advertising', 'Gaming', 'Streaming'], totalEarnings: 8900, avatarSeed: 15, energyArchetype: 'Playful & Creative', gender: 'Female', skinTone: 'Light', accent: 'American General' },
-  { id: 'IMA-1005', firstName: 'Carlos', lastInitial: 'M', ageRange: '35–39', voiceType: 'Tenor', availableUses: ['Advertising', 'Film & TV', 'Gaming'], totalEarnings: 15300, avatarSeed: 21, energyArchetype: 'Energetic & Inspiring', gender: 'Male', skinTone: 'Medium Brown', accent: 'American Southern' },
-  { id: 'IMA-1006', firstName: 'Aisha', lastInitial: 'P', ageRange: '30–39', voiceType: 'Alto', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 22100, avatarSeed: 9, energyArchetype: 'Sophisticated & Elegant', gender: 'Female', skinTone: 'Medium Tan', accent: 'British RP' },
-  { id: 'IMA-1007', firstName: 'Derek', lastInitial: 'H', ageRange: '50–59', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 27800, avatarSeed: 52, energyArchetype: 'Distinguished & Dependable', gender: 'Male', skinTone: 'Fair', accent: 'American General' },
-  { id: 'IMA-1008', firstName: 'Zara', lastInitial: 'W', ageRange: '18–24', voiceType: 'Mezzo-Soprano', availableUses: ['Advertising', 'Streaming', 'Gaming'], totalEarnings: 6700, avatarSeed: 26, energyArchetype: 'Fresh & Authentic', gender: 'Female', skinTone: 'Medium Brown', accent: 'American General' },
-  { id: 'IMA-1009', firstName: 'Raj', lastInitial: 'K', ageRange: '40–49', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 19500, avatarSeed: 41, energyArchetype: 'Analytical & Credible', gender: 'Male', skinTone: 'Medium Tan', accent: 'Indian English' },
-  { id: 'IMA-1010', firstName: 'Maya', lastInitial: 'C', ageRange: '25–29', voiceType: 'Alto', availableUses: ['Advertising', 'Film & TV', 'Gaming'], totalEarnings: 13900, avatarSeed: 17, energyArchetype: 'Bold & Confident', gender: 'Female', skinTone: 'Light', accent: 'American General' },
-  { id: 'IMA-1011', firstName: 'Andre', lastInitial: 'D', ageRange: '35–39', voiceType: 'Tenor', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 34600, avatarSeed: 60, energyArchetype: 'Charismatic & Romantic', gender: 'Male', skinTone: 'Medium Brown', accent: 'French' },
-  { id: 'IMA-1012', firstName: 'Fatima', lastInitial: 'A', ageRange: '30–39', voiceType: 'Mezzo-Soprano', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 16200, avatarSeed: 3, energyArchetype: 'Resilient & Inspiring', gender: 'Female', skinTone: 'Medium Olive', accent: 'American General' },
-  { id: 'IMA-1013', firstName: 'Tyler', lastInitial: 'B', ageRange: '18–24', voiceType: 'Tenor', availableUses: ['Advertising', 'Gaming', 'Streaming'], totalEarnings: 7400, avatarSeed: 44, energyArchetype: 'Youthful & Aspirational', gender: 'Male', skinTone: 'Fair', accent: 'American General' },
-  { id: 'IMA-1014', firstName: 'Grace', lastInitial: 'O', ageRange: '45–54', voiceType: 'Alto', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 24100, avatarSeed: 7, energyArchetype: 'Powerful & Maternal', gender: 'Female', skinTone: 'Deep Brown', accent: 'American General' },
-  { id: 'IMA-1015', firstName: 'Luca', lastInitial: 'R', ageRange: '25–29', voiceType: 'Tenor', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 11000, avatarSeed: 57, energyArchetype: 'Artistic & Dreamy', gender: 'Male', skinTone: 'Light Olive', accent: 'Italian' },
-  { id: 'IMA-1016', firstName: 'Priya', lastInitial: 'S', ageRange: '25–29', voiceType: 'Soprano', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 9800, avatarSeed: 19, energyArchetype: 'Joyful & Vibrant', gender: 'Female', skinTone: 'Medium Tan', accent: 'British Asian' },
-  { id: 'IMA-1017', firstName: 'Nathan', lastInitial: 'P', ageRange: '40–49', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV'], totalEarnings: 14700, avatarSeed: 48, energyArchetype: 'Rugged & Genuine', gender: 'Male', skinTone: 'Fair', accent: 'American Southern' },
-  { id: 'IMA-1018', firstName: 'Kezia', lastInitial: 'A', ageRange: '18–24', voiceType: 'Alto', availableUses: ['Advertising', 'Streaming'], totalEarnings: 4200, avatarSeed: 11, energyArchetype: 'Fierce & Expressive', gender: 'Female', skinTone: 'Rich Ebony', accent: 'American General' },
-  { id: 'IMA-1019', firstName: 'David', lastInitial: 'K', ageRange: '50–59', voiceType: 'Baritone', availableUses: ['Advertising', 'Film & TV', 'Streaming'], totalEarnings: 21300, avatarSeed: 67, energyArchetype: 'Calm & Authoritative', gender: 'Male', skinTone: 'Light', accent: 'American General' },
-  { id: 'IMA-1020', firstName: 'Lucia', lastInitial: 'F', ageRange: '35–39', voiceType: 'Mezzo-Soprano', availableUses: ['Advertising', 'Film & TV', 'Streaming', 'Gaming'], totalEarnings: 17600, avatarSeed: 23, energyArchetype: 'Passionate & Magnetic', gender: 'Female', skinTone: 'Medium Olive', accent: 'American General' },
-]
+import type { Creator } from '@/components/CreatorCard'
 
 const VOICE_TYPES = ['All', 'Bass', 'Baritone', 'Tenor', 'Alto', 'Mezzo-Soprano', 'Soprano']
-const ACCENTS = ['All', 'American General', 'American Southern', 'British RP', 'British Asian', 'French', 'Italian', 'Indian English']
+const ACCENTS = ['All', 'American General', 'American Southern', 'British RP', 'British Asian', 'French', 'Italian', 'Indian English', 'South Indian', 'British Nigerian', 'German']
 const USE_CATEGORIES = ['All', 'Advertising', 'Film & TV', 'Streaming', 'Gaming', 'AI Model Training']
-const GENDERS = ['All', 'Male', 'Female']
-const AGE_RANGES = ['All', '18–24', '25–29', '30–39', '35–39', '40–49', '45–54', '50–59']
+const GENDERS = ['All', 'Male', 'Female', 'Non-binary']
+const AGE_RANGES = ['All', '18-24', '22-30', '24-32', '25-34', '28-38', '30-40', '35-44', '40-52', '45-55', '55-65']
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011'
 
 export default function BuyerSearchPage() {
+  const [allCreators, setAllCreators] = useState<Creator[]>([])
+  const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
     gender: 'All',
     ageRange: 'All',
@@ -47,9 +29,35 @@ export default function BuyerSearchPage() {
   })
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
+  useEffect(() => {
+    setLoading(true)
+    fetch(`${API_URL}/api/creators?limit=50`)
+      .then((r) => r.json())
+      .then((data) => {
+        const mapped: Creator[] = (data.creators || []).map((c: Record<string, unknown>) => ({
+          id: c.id as string,
+          firstName: c.firstName as string,
+          lastInitial: c.lastInitial as string,
+          ageRange: c.ageRange as string,
+          gender: c.gender as string,
+          voiceType: c.voiceType as string,
+          accent: c.accent as string,
+          availableUses: (c.availableUses as string[]) || [],
+          totalEarnings: c.totalEarnings as number,
+          avatarSeed: c.avatarSeed as number,
+          imageUrl: c.imageProfileUrl as string,
+          energyArchetype: c.energyArchetype as string,
+          skinTone: c.skinTone as string,
+        }))
+        setAllCreators(mapped)
+      })
+      .catch(() => setAllCreators([]))
+      .finally(() => setLoading(false))
+  }, [])
+
   const filtered = useMemo(() => {
-    return ALL_CREATORS.filter((c) => {
-      if (filters.gender !== 'All' && c.gender !== filters.gender) return false
+    return allCreators.filter((c) => {
+      if (filters.gender !== 'All' && c.gender?.toLowerCase() !== filters.gender.toLowerCase()) return false
       if (filters.ageRange !== 'All' && c.ageRange !== filters.ageRange) return false
       if (filters.voiceType !== 'All' && c.voiceType !== filters.voiceType) return false
       if (filters.accent !== 'All' && c.accent !== filters.accent) return false
@@ -58,14 +66,14 @@ export default function BuyerSearchPage() {
       if (filters.search && !`${c.firstName} ${c.energyArchetype}`.toLowerCase().includes(filters.search.toLowerCase())) return false
       return true
     })
-  }, [filters])
+  }, [filters, allCreators])
 
   const setFilter = (key: keyof typeof filters, value: string) =>
     setFilters((prev) => ({ ...prev, [key]: value }))
 
   const activeFilterCount = Object.entries(filters).filter(
-    ([k, v]) => v !== 'All' && v !== ''
-  ).length
+    ([k, v]) => k !== 'search' && v !== 'All' && v !== ''
+  ).length + (filters.search ? 1 : 0)
 
   const FilterSelect = ({ label, field, options }: { label: string; field: keyof typeof filters; options: string[] }) => (
     <div>
@@ -167,7 +175,7 @@ export default function BuyerSearchPage() {
           <div>
             <h1 style={{ fontWeight: 700, fontSize: '1.5rem', color: '#1A1A1A', marginBottom: '4px' }}>Browse Talent</h1>
             <p style={{ fontSize: '0.875rem', color: '#8A8A8A' }}>
-              {filtered.length} of {ALL_CREATORS.length} creators match your filters
+              {loading ? 'Loading...' : `${filtered.length} of ${allCreators.length} creators match your filters`}
             </p>
           </div>
 
@@ -266,7 +274,11 @@ export default function BuyerSearchPage() {
 
           {/* Results grid */}
           <div style={{ flex: 1 }}>
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '4rem 0', color: '#8A8A8A' }}>
+                <p style={{ fontSize: '1.1rem' }}>Loading talent...</p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '4rem 0', color: '#8A8A8A' }}>
                 <p style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>No creators match your filters</p>
                 <p style={{ fontSize: '0.875rem' }}>Try broadening your search</p>
